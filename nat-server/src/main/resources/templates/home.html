@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>内网穿透</title>
+    <link rel="stylesheet" th:href="@{layui/css/layui.css}">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div th:include="include/header :: header"></div>
+    <div th:include="include/side :: side"></div>
+    <div th:include="include/footer :: footer"></div>
+
+    <div class="layui-body">
+        <div style="padding: 20px; background-color: #F2F2F2;">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md6">
+                    <div class="layui-card">
+                        <div class="layui-card-header">服务端</div>
+                        <div class="layui-card-body">
+                            TODO
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="layui-card">
+                        <div class="layui-card-header">客户端</div>
+                        <div class="layui-card-body">
+                            TODO
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header">启动</div>
+                        <div class="layui-card-body">
+                            1. java -jar server.jar -port 8888
+                            <br>
+                            2. java -jar client.jar -server_addr www.littleredhat1997.com -server_port 8888 -secret ***
+                            -proxy_addr localhost -proxy_port 8080 -remote_port 10000
+                            <br>
+                            3. OK
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{layui/layui.js}"></script>
+<script>
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+</script>
+</body>
+</html>

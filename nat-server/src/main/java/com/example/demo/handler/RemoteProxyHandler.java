@@ -1,0 +1,51 @@
+package com.example.demo.handler;
+
+import io.netty.channel.ChannelHandlerContext;
+import com.example.demo.protocol.NatxMessage;
+import com.example.demo.protocol.NatxMessageType;
+
+import java.util.HashMap;
+
+/**
+ * Created by wucao on 2019/3/2.
+ */
+public class RemoteProxyHandler extends NatxCommonHandler {
+
+    private NatxCommonHandler proxyHandler;
+
+    public RemoteProxyHandler(NatxCommonHandler proxyHandler) {
+        this.proxyHandler = proxyHandler;
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        NatxMessage message = new NatxMessage();
+        message.setType(NatxMessageType.CONNECTED);
+        HashMap<String, Object> metaData = new HashMap<>();
+        metaData.put("channelId", ctx.channel().id().asLongText());
+        message.setMetaData(metaData);
+        proxyHandler.getCtx().writeAndFlush(message);
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        NatxMessage message = new NatxMessage();
+        message.setType(NatxMessageType.DISCONNECTED);
+        HashMap<String, Object> metaData = new HashMap<>();
+        metaData.put("channelId", ctx.channel().id().asLongText());
+        message.setMetaData(metaData);
+        proxyHandler.getCtx().writeAndFlush(message);
+    }
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        byte[] data = (byte[]) msg;
+        NatxMessage message = new NatxMessage();
+        message.setType(NatxMessageType.DATA);
+        message.setData(data);
+        HashMap<String, Object> metaData = new HashMap<>();
+        metaData.put("channelId", ctx.channel().id().asLongText());
+        message.setMetaData(metaData);
+        proxyHandler.getCtx().writeAndFlush(message);
+    }
+}
