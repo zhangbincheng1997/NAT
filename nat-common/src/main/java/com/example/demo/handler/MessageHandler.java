@@ -4,13 +4,12 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import com.example.demo.protocol.NatxMessage;
-import com.example.demo.protocol.NatxMessageType;
+import com.example.demo.protocol.Message;
+import com.example.demo.protocol.MessageType;
+import lombok.extern.slf4j.Slf4j;
 
-/**
- * Created by wucao on 2019/2/28.
- */
-public class NatxCommonHandler extends ChannelInboundHandlerAdapter {
+@Slf4j
+public class MessageHandler extends ChannelInboundHandlerAdapter {
 
     protected ChannelHandlerContext ctx;
 
@@ -25,7 +24,7 @@ public class NatxCommonHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        System.out.println("Exception caught ...");
+        log.error("捕获未知异常...");
         cause.printStackTrace();
     }
 
@@ -33,13 +32,14 @@ public class NatxCommonHandler extends ChannelInboundHandlerAdapter {
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent e = (IdleStateEvent) evt;
-            if (e.state() == IdleState.READER_IDLE) {
-                System.out.println("Read idle loss connection.");
+            if (e.state() == IdleState.READER_IDLE) { // 一段时间内没有数据接收
+                log.error("关闭通道...");
                 ctx.close();
-            } else if (e.state() == IdleState.WRITER_IDLE) {
-                NatxMessage natxMessage = new NatxMessage();
-                natxMessage.setType(NatxMessageType.KEEPALIVE);
-                ctx.writeAndFlush(natxMessage);
+            } else if (e.state() == IdleState.WRITER_IDLE) { // 一段时间内没有数据发送
+                log.info("心跳检测...");
+                Message message = new Message();
+                message.setType(MessageType.KEEPALIVE);
+                ctx.writeAndFlush(message);
             }
         }
     }

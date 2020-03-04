@@ -1,7 +1,7 @@
 package com.example.demo.handler;
 
 import com.example.demo.net.TcpServer;
-import com.example.demo.exception.NatxException;
+import com.example.demo.exception.GlobalException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.group.ChannelGroup;
@@ -10,15 +10,15 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.util.concurrent.GlobalEventExecutor;
-import com.example.demo.protocol.NatxMessage;
-import com.example.demo.protocol.NatxMessageType;
+import com.example.demo.protocol.Message;
+import com.example.demo.protocol.MessageType;
 
 import java.util.HashMap;
 
 /**
  * Created by wucao on 2019/2/27.
  */
-public class NatxServerHandler extends NatxCommonHandler {
+public class ServerHandler extends MessageHandler {
 
     private TcpServer remoteConnectionServer = new TcpServer();
 
@@ -29,25 +29,25 @@ public class NatxServerHandler extends NatxCommonHandler {
 
     private boolean register = false;
 
-    public NatxServerHandler(String password) {
+    public ServerHandler(String password) {
         this.password = password;
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
-        NatxMessage natxMessage = (NatxMessage) msg;
-        if (natxMessage.getType() == NatxMessageType.REGISTER) {
-            processRegister(natxMessage);
+        Message message = (Message) msg;
+        if (message.getType() == MessageType.REGISTER) {
+            processRegister(message);
         } else if (register) {
-            if (natxMessage.getType() == NatxMessageType.DISCONNECTED) {
-                processDisconnected(natxMessage);
-            } else if (natxMessage.getType() == NatxMessageType.DATA) {
-                processData(natxMessage);
-            } else if (natxMessage.getType() == NatxMessageType.KEEPALIVE) {
+            if (message.getType() == MessageType.DISCONNECTED) {
+                processDisconnected(message);
+            } else if (message.getType() == MessageType.DATA) {
+                processData(message);
+            } else if (message.getType() == MessageType.KEEPALIVE) {
                 // 心跳包, 不处理
             } else {
-                throw new NatxException("Unknown type: " + natxMessage.getType());
+                throw new GlobalException("Unknown type: " + message.getType());
             }
         } else {
             ctx.close();
@@ -65,19 +65,19 @@ public class NatxServerHandler extends NatxCommonHandler {
     /**
      * if natxMessage.getType() == NatxMessageType.REGISTER
      */
-    private void processRegister(NatxMessage natxMessage) {
+    private void processRegister(Message message) {
         HashMap<String, Object> metaData = new HashMap<>();
 
-        String password = natxMessage.getMetaData().get("password").toString();
+        String password = message.getMetaData().get("password").toString();
         if (this.password != null && !this.password.equals(password)) {
             metaData.put("success", false);
             metaData.put("reason", "Token is wrong");
         } else {
-            int port = (int) natxMessage.getMetaData().get("port");
+            int port = (int) message.getMetaData().get("port");
 
             try {
 
-                NatxServerHandler thisHandler = this;
+                ServerHandler thisHandler = this;
                 remoteConnectionServer.bind(port, new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel ch) throws Exception {
@@ -97,8 +97,8 @@ public class NatxServerHandler extends NatxCommonHandler {
             }
         }
 
-        NatxMessage sendBackMessage = new NatxMessage();
-        sendBackMessage.setType(NatxMessageType.REGISTER_RESULT);
+        Message sendBackMessage = new Message();
+        sendBackMessage.setType(MessageType.REGISTER_RESULT);
         sendBackMessage.setMetaData(metaData);
         ctx.writeAndFlush(sendBackMessage);
 
@@ -111,15 +111,15 @@ public class NatxServerHandler extends NatxCommonHandler {
     /**
      * if natxMessage.getType() == NatxMessageType.DATA
      */
-    private void processData(NatxMessage natxMessage) {
-        channels.writeAndFlush(natxMessage.getData(), channel -> channel.id().asLongText().equals(natxMessage.getMetaData().get("channelId")));
+    private void processData(Message message) {
+        channels.writeAndFlush(message.getData(), channel -> channel.id().asLongText().equals(message.getMetaData().get("channelId")));
     }
 
     /**
      * if natxMessage.getType() == NatxMessageType.DISCONNECTED
-     * @param natxMessage
+     * @param message
      */
-    private void processDisconnected(NatxMessage natxMessage) {
-        channels.close(channel -> channel.id().asLongText().equals(natxMessage.getMetaData().get("channelId")));
+    private void processDisconnected(Message message) {
+        channels.close(channel -> channel.id().asLongText().equals(message.getMetaData().get("channelId")));
     }
 }

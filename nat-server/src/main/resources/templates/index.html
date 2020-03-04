@@ -2,48 +2,36 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>Layui - 经典模块化前端 UI 框架</title>
-    <meta name="keywords" content="layui,ui,ui框架,前端框架,JS组件">
-    <meta name="description"
-          content="layui 是一款采用自身模块规范编写的前端 UI 框架，遵循原生 HTML/CSS/JS 的书写与组织形式，门槛极低，拿来即用。其外在极简，却又不失饱满的内在，体积轻盈，组件丰盈，从核心代码到 API 的每一处细节都经过精心雕琢，非常适合界面的快速开发。">
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="format-detection" content="telephone=no">
-
-    <link rel="stylesheet" th:href="@{layui/css/layui.css}" media="all">
-    <link rel="stylesheet" th:href="@{css/global.css}" media="all">
+    <title>内网穿透</title>
+    <link rel="stylesheet" th:href="@{layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{css/global.css}">
 </head>
+<body>
 <div class="site-banner">
-    <div class="site-banner-bg" style="background-image: url(image/bg.png); background-size: cover;"></div>
+    <div class="site-banner-bg" style="background-image: url(image/dawn.jpg); background-size: 100% 100%;"></div>
     <div class="site-banner-main">
         <div class="site-zfj">
-            <i class="layui-icon" style="color: #fff; color: rgba(255,255,255,.7);">&#xe609;</i>
+            <i class="layui-icon layui-icon-release" style="color: #fff; color: rgba(255,255,255,.7);"></i>
         </div>
         <div class="layui-anim site-desc">
             <p class="web-font-desc">内网穿透</p>
-            <cite>可以很轻易的调试微信、支付宝等相关接口回调，同时也支持本地web应该发布到外网访问。</cite>
+            <cite>1. 微信、支付宝支付 2. 小程序应用 3. 个人网站 ......</cite>
         </div>
         <div class="site-download">
-            <a href="//res.layui.com/static/download/layui/layui-v2.5.6.zip?v=2" class="layui-inline site-down"
-               target="_blank">
-                <cite class="layui-icon">&#xe601;</cite>
-                立即下载
+            <a href="https://github.com/littleredhat1997" class="layui-inline">
+                <cite class="layui-icon layui-icon-download-circle"></cite>立即下载
             </a>
         </div>
         <div class="site-version">
-            <span>当前版本：<cite class="site-showv">…</cite></span>
+            <span>当前版本：1.0.0</span>
         </div>
         <div class="site-banner-other">
-            <a href="https://github.com/sentsin/layui/" target="_blank" class="site-star">
-                <i class="layui-icon">&#xe658;</i>
-                Star <cite id="getStars"></cite>
+            <a href="https://github.com/littleredhat1997">
+                <i class="layui-icon layui-icon-star"></i>Star
             </a>
-            <a href="https://github.com/sentsin/layui/network/members" target="_blank" rel="nofollow" class="site-fork">
-                <i class="layui-icon">&#xe62e;</i>
-                Fork
+            <a href="https://github.com/littleredhat1997">
+                <i class="layui-icon layui-icon-tree"></i>Fork
             </a>
         </div>
     </div>
@@ -51,16 +39,12 @@
 <div class="layui-main">
     <div class="layui-row">
         <div class="layui-col-md6">
-            <div style="text-align: center;">
-                <h1 style="margin-top: 20px;margin-bottom: 20px;">服务端</h1>
-                <div style="background-image: url(image/server.png);width: 400px; height: 300px;margin: 0 auto; background-size: cover;"></div>
-            </div>
+            <h1 style="text-align: center; margin: 20px 0; color: #393D49;">服务端</h1>
+            <div style="width: 400px; height: 300px; margin: 0 auto; background-image: url(image/server.png); background-size: 100% 100%;"></div>
         </div>
         <div class="layui-col-md6">
-            <div style="text-align: center;">
-                <h1 style="margin-top: 20px;margin-bottom: 20px;">客户端</h1>
-                <div style="background-image: url(image/app.png);width: 400px; height: 300px;margin: 0 auto; background-size: cover;"></div>
-            </div>
+            <h1 style="text-align: center; margin: 20px 0; color: #393D49;">客户端</h1>
+            <div style="width: 400px; height: 300px; margin: 0 auto; background-image: url(image/app.png); background-size: 100% 100%;"></div>
         </div>
     </div>
 
@@ -80,24 +64,13 @@
         <li>
             <fieldset class="layui-elem-field layui-field-title">
                 <legend>绑定域名</legend>
-                <p>目前只支持www.littleredhat1997.com的顶级域名，如果你想使用自己的顶级域名可以下载服务器版本。</p>
+                <p>目前只支持littleredhat1997.com顶级域名，如果你想使用其他顶级域名可以自行修改服务器源码。</p>
             </fieldset>
         </li>
     </ul>
 </div>
-<div class="layui-footer footer footer-index">
-    <div class="layui-main">
-        <p>&copy; 2020 <a href="/">layui.com</a></p>
-        <p>
-            <a href="https://github.com/sentsin/layui/" target="_blank" rel="nofollow">GitHub</a>
-            <a href="http://www.miitbeian.gov.cn/" target="_blank" rel="nofollow">xxxx</a>
-        </p>
-        <div class="site-union">
-            <p class="site-union-desc">
-        </div>
-    </div>
+<div class="footer">
+        <p>&copy; 2020 <a href="http://littleredhat1997.com/">littleredhat1997.com</a></p>
 </div>
-
-
 </body>
 </html>

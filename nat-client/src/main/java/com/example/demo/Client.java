@@ -1,8 +1,8 @@
 package com.example.demo;
 
-import com.example.demo.codec.NatxMessageDecoder;
-import com.example.demo.codec.NatxMessageEncoder;
-import com.example.demo.handler.NatxClientHandler;
+import com.example.demo.codec.MessageDecoder;
+import com.example.demo.codec.MessageEncoder;
+import com.example.demo.handler.ClientHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
@@ -13,7 +13,7 @@ import org.apache.commons.cli.*;
 /**
  * Created by wucao on 2019/2/27.
  */
-public class NatxClient {
+public class Client {
 
     public static void main(String[] args) throws Exception {
 
@@ -67,10 +67,10 @@ public class NatxClient {
             natxConnection.connect(serverAddress, Integer.parseInt(serverPort), new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) throws Exception {
-                    NatxClientHandler natxClientHandler = new NatxClientHandler(Integer.parseInt(remotePort), password,
+                    ClientHandler natxClientHandler = new ClientHandler(Integer.parseInt(remotePort), password,
                             proxyAddress, Integer.parseInt(proxyPort));
                     ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4),
-                            new NatxMessageDecoder(), new NatxMessageEncoder(),
+                            new MessageDecoder(), new MessageEncoder(),
                             new IdleStateHandler(60, 30, 0), natxClientHandler);
                 }
             });

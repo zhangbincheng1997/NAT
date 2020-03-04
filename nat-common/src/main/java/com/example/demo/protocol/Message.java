@@ -2,20 +2,17 @@ package com.example.demo.protocol;
 
 import java.util.Map;
 
-/**
- * Created by wucao on 2019/3/2.
- */
-public class NatxMessage {
+public class Message {
 
-    private NatxMessageType type;
+    private MessageType type;
     private Map<String, Object> metaData;
     private byte[] data;
 
-    public NatxMessageType getType() {
+    public MessageType getType() {
         return type;
     }
 
-    public void setType(NatxMessageType type) {
+    public void setType(MessageType type) {
         this.type = type;
     }
 

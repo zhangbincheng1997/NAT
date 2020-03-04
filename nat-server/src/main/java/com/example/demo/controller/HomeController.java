@@ -6,18 +6,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController {
 
-    @GetMapping("/user")
-    public String user() {
-        return "user";
-    }
-
-    @GetMapping("/network")
-    public String network() {
-        return "network";
+    @GetMapping("/home")
+    public String home() {
+        return "home";
     }
 
     @GetMapping("/password")
     public String password() {
         return "password";
+    }
+
+    @GetMapping("/blacklist")
+    public String blacklist() {
+        return "blacklist";
+    }
+
+    @GetMapping("/network")
+    public String network() {
+        return "network";
     }
 }

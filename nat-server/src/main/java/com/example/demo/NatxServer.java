@@ -1,8 +1,8 @@
 package com.example.demo;
 
-import com.example.demo.codec.NatxMessageDecoder;
-import com.example.demo.codec.NatxMessageEncoder;
-import com.example.demo.handler.NatxServerHandler;
+import com.example.demo.codec.MessageDecoder;
+import com.example.demo.codec.MessageEncoder;
+import com.example.demo.handler.ServerHandler;
 import com.example.demo.net.TcpServer;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -40,9 +40,9 @@ public class NatxServer {
                 @Override
                 public void initChannel(SocketChannel ch)
                         throws Exception {
-                    NatxServerHandler natxServerHandler = new NatxServerHandler(password);
+                    ServerHandler natxServerHandler = new ServerHandler(password);
                     ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4),
-                            new NatxMessageDecoder(), new NatxMessageEncoder(),
+                            new MessageDecoder(), new MessageEncoder(),
                             new IdleStateHandler(60, 30, 0), natxServerHandler);
                 }
             });
