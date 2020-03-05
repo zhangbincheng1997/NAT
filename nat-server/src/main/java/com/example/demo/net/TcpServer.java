@@ -5,18 +5,13 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-/**
- * Created by wucao on 2019/2/27.
- */
 public class TcpServer {
 
     private Channel channel;
 
-    public synchronized void bind(int port, ChannelInitializer channelInitializer) throws InterruptedException {
-
+    public synchronized void bind(int port, ChannelInitializer channelInitializer) {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
-
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
@@ -31,7 +26,7 @@ public class TcpServer {
         } catch (Exception e) {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
-            throw e;
+            e.printStackTrace();
         }
     }
 

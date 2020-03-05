@@ -1,6 +1,6 @@
-package com.example.demo.service.impl;
+package com.example.demo.web.service.impl;
 
-import com.example.demo.service.UserService;
+import com.example.demo.web.service.UserService;
 
 public class UserServiceImpl implements UserService {
 

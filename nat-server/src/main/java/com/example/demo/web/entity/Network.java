@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.example.demo.web.entity;
 
 import lombok.Data;
 
@@ -16,15 +16,12 @@ public class Network implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "ip", nullable = false)
-    private String ip;          // 内网地址
+    @Column(name = "host", nullable = false)
+    private String host;          // 地址
 
     @Column(name = "port", nullable = false)
-    private String port;        // 内网端口
+    private String port;        // 端口
 
-    @Column(name = "remote", nullable = false)
-    private String remote;      // 公网端口
-
-    @Column(name = "flow", nullable = false)
+    @Column(name = "flow", nullable = true)
     private String flow;      // 流量
 }

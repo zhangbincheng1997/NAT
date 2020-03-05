@@ -27,6 +27,6 @@ public enum MessageType {
                 return item;
             }
         }
-        throw new GlobalException("MessageType code error: " + code);
+        throw new GlobalException("消息类型解析错误: " + code);
     }
 }

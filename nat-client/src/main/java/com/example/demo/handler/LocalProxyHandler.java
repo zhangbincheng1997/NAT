@@ -6,9 +6,6 @@ import com.example.demo.protocol.MessageType;
 
 import java.util.HashMap;
 
-/**
- * Created by wucao on 2019/3/2.
- */
 public class LocalProxyHandler extends MessageHandler {
 
     private MessageHandler proxyHandler;
@@ -21,10 +18,9 @@ public class LocalProxyHandler extends MessageHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        byte[] data = (byte[]) msg;
         Message message = new Message();
         message.setType(MessageType.DATA);
-        message.setData(data);
+        message.setData((byte[]) msg);
         HashMap<String, Object> metaData = new HashMap<>();
         metaData.put("channelId", remoteChannelId);
         message.setMetaData(metaData);

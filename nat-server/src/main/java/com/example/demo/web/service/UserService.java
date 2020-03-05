@@ -1,6 +1,4 @@
-package com.example.demo.service;
-
-import com.example.demo.entity.User;
+package com.example.demo.web.service;
 
 public interface UserService {
 

@@ -33,8 +33,8 @@ public class MessageHandler extends ChannelInboundHandlerAdapter {
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent e = (IdleStateEvent) evt;
             if (e.state() == IdleState.READER_IDLE) { // 一段时间内没有数据接收
-                log.error("关闭通道...");
-                ctx.close();
+                // log.error("关闭通道...");
+                // ctx.close();
             } else if (e.state() == IdleState.WRITER_IDLE) { // 一段时间内没有数据发送
                 log.info("心跳检测...");
                 Message message = new Message();

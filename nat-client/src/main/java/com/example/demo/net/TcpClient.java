@@ -5,38 +5,29 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
-import java.io.IOException;
-
-/**
- * A TCP connection to server
- */
-public class TcpConnection {
+public class TcpClient {
 
     private Channel channel;
 
-    /**
-     *
-     * @param host
-     * @param port
-     * @param channelInitializer
-     * @throws InterruptedException
-     */
-    public void connect(String host, int port, ChannelInitializer channelInitializer) throws InterruptedException, IOException {
-
+    public void connect(String host, int port, ChannelInitializer channelInitializer) {
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
-
         try {
             Bootstrap b = new Bootstrap();
-            b.group(workerGroup);
-            b.channel(NioSocketChannel.class);
-            b.option(ChannelOption.SO_KEEPALIVE, true);
-            b.handler(channelInitializer);
-
+            b.group(workerGroup)
+                    .channel(NioSocketChannel.class)
+                    .handler(channelInitializer)
+                    .option(ChannelOption.SO_KEEPALIVE, true);
             channel = b.connect(host, port).sync().channel();
             channel.closeFuture().addListener((ChannelFutureListener) future -> workerGroup.shutdownGracefully());
         } catch (Exception e) {
             workerGroup.shutdownGracefully();
-            throw e;
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized void close() {
+        if (channel != null) {
+            channel.close();
         }
     }
 }

@@ -1,6 +1,6 @@
-package com.example.demo.dao;
+package com.example.demo.web.dao;
 
-import com.example.demo.entity.User;
+import com.example.demo.web.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {

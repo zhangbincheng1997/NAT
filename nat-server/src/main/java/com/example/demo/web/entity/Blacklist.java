@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.example.demo.web.entity;
 
 import lombok.Data;
 
@@ -16,6 +16,6 @@ public class Blacklist implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "ip", nullable = false)
-    private String ip;          // 地址
+    @Column(name = "host", nullable = false)
+    private String host;          // 地址
 }
