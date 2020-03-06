@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 public class LocalProxyHandler extends MessageHandler {
 
+    // ChannelHandlerContext
     private MessageHandler proxyHandler;
     private String remoteChannelId;
 
@@ -20,10 +21,8 @@ public class LocalProxyHandler extends MessageHandler {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         Message message = new Message();
         message.setType(MessageType.DATA);
+        message.setChannelId(remoteChannelId);
         message.setData((byte[]) msg);
-        HashMap<String, Object> metaData = new HashMap<>();
-        metaData.put("channelId", remoteChannelId);
-        message.setMetaData(metaData);
         proxyHandler.getCtx().writeAndFlush(message);
     }
 
@@ -31,9 +30,8 @@ public class LocalProxyHandler extends MessageHandler {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Message message = new Message();
         message.setType(MessageType.DISCONNECTED);
-        HashMap<String, Object> metaData = new HashMap<>();
-        metaData.put("channelId", remoteChannelId);
-        message.setMetaData(metaData);
+        message.setChannelId(remoteChannelId);
+        message.setData(null);
         proxyHandler.getCtx().writeAndFlush(message);
     }
 }

@@ -34,6 +34,7 @@ public class Application implements CommandLineRunner {
                         new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4),
                         new MessageDecoder(),
                         new MessageEncoder(),
+                        // 心跳检测
                         new IdleStateHandler(60, 30, 0),
                         new ServerHandler());
             }

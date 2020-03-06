@@ -3,6 +3,7 @@ package com.example.demo.handler;
 import com.alibaba.fastjson.JSON;
 import com.example.demo.net.TcpServer;
 import com.example.demo.exception.GlobalException;
+import com.example.demo.protocol.Utils;
 import com.example.demo.web.entity.Blacklist;
 import com.example.demo.web.service.BlacklistService;
 import com.example.demo.web.service.NetworkService;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 import java.util.HashMap;
 
 @Slf4j
@@ -42,10 +44,10 @@ public class ServerHandler extends MessageHandler {
         } else if (register) {
             if (message.getType() == MessageType.DISCONNECTED) {
                 channels.close(channel ->
-                        channel.id().asLongText().equals(message.getMetaData().get("channelId")));
+                        channel.id().asLongText().equals(message.getChannelId()));
             } else if (message.getType() == MessageType.DATA) {
                 channels.writeAndFlush(message.getData(), channel ->
-                        channel.id().asLongText().equals(message.getMetaData().get("channelId")));
+                        channel.id().asLongText().equals(message.getChannelId()));
             } else if (message.getType() == MessageType.KEEPALIVE) {
                 log.info("心跳检测成功...");
             }
@@ -60,13 +62,14 @@ public class ServerHandler extends MessageHandler {
     }
 
     private void processRegister(Message message) {
-        int port = (int) message.getMetaData().get("port");
+        int port = Utils.byteArrayToInt(message.getData()); // port
+        System.out.println("端口："+port);
         InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
         String clientAddress = socketAddress.getAddress().getHostAddress();
-        if(blacklistService.findByHost(clientAddress)) {
-            log.info("黑名单：{}", clientAddress);
-            return;
-        }
+//        if(blacklistService.findByHost(clientAddress)) {
+//            log.info("黑名单：{}", clientAddress);
+//            return;
+//        }
         try {
             ServerHandler thisHandler = this;
             remoteServer.bind(port, new ChannelInitializer<SocketChannel>() {
@@ -82,10 +85,9 @@ public class ServerHandler extends MessageHandler {
             register = true;
 
             Message sendBackMessage = new Message();
-            HashMap<String, Object> metaData = new HashMap<>();
-            metaData.put("success", true);
             sendBackMessage.setType(MessageType.REGISTER_RESULT);
-            sendBackMessage.setMetaData(metaData);
+            sendBackMessage.setChannelId("0000");
+            sendBackMessage.setData("success".getBytes());
             ctx.writeAndFlush(sendBackMessage);
 
             // TODO 获取客户端地址和端口
@@ -94,12 +96,9 @@ public class ServerHandler extends MessageHandler {
         } catch (Exception e) {
             log.error("客户端注册失败");
             Message sendBackMessage = new Message();
-            HashMap<String, Object> metaData = new HashMap<>();
-            metaData.put("success", false);
-            metaData.put("reason", e.getMessage());
             sendBackMessage.setType(MessageType.REGISTER_RESULT);
-            sendBackMessage.setMetaData(metaData);
-            ctx.writeAndFlush(sendBackMessage);
+            sendBackMessage.setChannelId("0000");
+            sendBackMessage.setData("failure".getBytes());
             e.printStackTrace();
         }
         ctx.close();

@@ -32,13 +32,14 @@ public class MessageHandler extends ChannelInboundHandlerAdapter {
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent e = (IdleStateEvent) evt;
-            if (e.state() == IdleState.READER_IDLE) { // 一段时间内没有数据接收
-                // log.error("关闭通道...");
-                // ctx.close();
-            } else if (e.state() == IdleState.WRITER_IDLE) { // 一段时间内没有数据发送
+            // IdleState.READER_IDLE 一段时间内没有数据接收
+            // IdleState.WRITER_IDLE 一段时间内没有数据发送
+            if (e.state() == IdleState.WRITER_IDLE) {
                 log.info("心跳检测...");
                 Message message = new Message();
                 message.setType(MessageType.KEEPALIVE);
+                message.setChannelId("0000");
+                message.setData(null);
                 ctx.writeAndFlush(message);
             }
         }

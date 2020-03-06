@@ -1,5 +1,6 @@
 package com.example.demo.handler;
 
+import com.example.demo.protocol.Utils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.group.ChannelGroup;
@@ -13,6 +14,7 @@ import com.example.demo.protocol.Message;
 import com.example.demo.protocol.MessageType;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,6 +25,9 @@ public class ClientHandler extends MessageHandler {
     private String localAddress;
     private int localPort;
 
+    /**
+     * 保存本地连接（到web程序的channel）
+     */
     private ConcurrentHashMap<String, MessageHandler> channelHandlerMap = new ConcurrentHashMap<>();
     private static ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
@@ -36,9 +41,8 @@ public class ClientHandler extends MessageHandler {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Message message = new Message();
         message.setType(MessageType.REGISTER);
-        HashMap<String, Object> metaData = new HashMap<>();
-        metaData.put("port", proxy);
-        message.setMetaData(metaData);
+        message.setChannelId("0000");
+        message.setData(Utils.intToByteArray(proxy));
         ctx.writeAndFlush(message);
         super.channelActive(ctx); // set TODO
     }
@@ -66,16 +70,16 @@ public class ClientHandler extends MessageHandler {
     }
 
     private void processRegisterResult(Message message) {
-        if ((Boolean) message.getMetaData().get("success")) {
+        if (Arrays.equals(message.getData(), "success".getBytes())) {
             log.info("注册成功");
         } else {
-            log.info("注册失败：" + message.getMetaData().get("reason"));
+            log.info("注册失败");
             ctx.close();
         }
     }
 
     private void processConnected(Message message) throws Exception {
-        String channelId = message.getMetaData().get("channelId").toString();
+        String channelId = message.getChannelId();
         try {
             ClientHandler thisHandler = this;
             TcpClient localConnection = new TcpClient();
@@ -94,9 +98,8 @@ public class ClientHandler extends MessageHandler {
         } catch (Exception e) {
             Message result = new Message();
             result.setType(MessageType.DISCONNECTED);
-            HashMap<String, Object> metaData = new HashMap<>();
-            metaData.put("channelId", channelId);
-            result.setMetaData(metaData);
+            result.setChannelId(channelId);
+            result.setData(null);
             ctx.writeAndFlush(result);
             channelHandlerMap.remove(channelId);
             throw e;
@@ -104,7 +107,7 @@ public class ClientHandler extends MessageHandler {
     }
 
     private void processDisconnected(Message message) {
-        String channelId = message.getMetaData().get("channelId").toString();
+        String channelId = message.getChannelId();
         MessageHandler handler = channelHandlerMap.get(channelId);
         if (handler != null) {
             handler.getCtx().close();
@@ -113,7 +116,7 @@ public class ClientHandler extends MessageHandler {
     }
 
     private void processData(Message message) {
-        String channelId = message.getMetaData().get("channelId").toString();
+        String channelId = message.getChannelId();
         MessageHandler handler = channelHandlerMap.get(channelId);
         if (handler != null) {
             ChannelHandlerContext ctx = handler.getCtx();

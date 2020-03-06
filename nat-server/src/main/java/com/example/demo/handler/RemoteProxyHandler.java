@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 public class RemoteProxyHandler extends MessageHandler {
 
+    // ChannelHandlerContext
     private MessageHandler proxyHandler;
 
     public RemoteProxyHandler(MessageHandler proxyHandler) {
@@ -18,10 +19,8 @@ public class RemoteProxyHandler extends MessageHandler {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         Message message = new Message();
         message.setType(MessageType.DATA);
+        message.setChannelId(ctx.channel().id().asLongText());
         message.setData((byte[]) msg);
-        HashMap<String, Object> metaData = new HashMap<>();
-        metaData.put("channelId", ctx.channel().id().asLongText());
-        message.setMetaData(metaData);
         proxyHandler.getCtx().writeAndFlush(message);
     }
 
@@ -29,9 +28,8 @@ public class RemoteProxyHandler extends MessageHandler {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         Message message = new Message();
         message.setType(MessageType.CONNECTED);
-        HashMap<String, Object> metaData = new HashMap<>();
-        metaData.put("channelId", ctx.channel().id().asLongText());
-        message.setMetaData(metaData);
+        message.setChannelId(ctx.channel().id().asLongText());
+        message.setData(null);
         proxyHandler.getCtx().writeAndFlush(message);
     }
 
@@ -39,9 +37,8 @@ public class RemoteProxyHandler extends MessageHandler {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Message message = new Message();
         message.setType(MessageType.DISCONNECTED);
-        HashMap<String, Object> metaData = new HashMap<>();
-        metaData.put("channelId", ctx.channel().id().asLongText());
-        message.setMetaData(metaData);
+        message.setChannelId(ctx.channel().id().asLongText());
+        message.setData(null);
         proxyHandler.getCtx().writeAndFlush(message);
     }
 }
