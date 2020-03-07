@@ -1,15 +1,9 @@
 package com.example.demo.codec;
 
-import com.alibaba.fastjson.JSONObject;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-import io.netty.util.CharsetUtil;
 import com.example.demo.protocol.Message;
-import com.example.demo.protocol.MessageType;
-
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 
 /**
  * 自定义协议：

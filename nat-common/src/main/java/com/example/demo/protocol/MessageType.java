@@ -1,9 +1,8 @@
 package com.example.demo.protocol;
 
-import com.example.demo.exception.GlobalException;
-
 public enum MessageType {
 
+    UNKNOWN(0),
     REGISTER(1),
     REGISTER_RESULT(2),
     CONNECTED(3),
@@ -21,12 +20,12 @@ public enum MessageType {
         return code;
     }
 
-    public static MessageType valueOf(int code) throws GlobalException {
+    public static MessageType valueOf(int code) {
         for (MessageType item : MessageType.values()) {
             if (item.code == code) {
                 return item;
             }
         }
-        throw new GlobalException("消息类型解析错误: " + code);
+        return UNKNOWN;
     }
 }

@@ -182,22 +182,25 @@ public class MainForm extends JFrame {
         int proxy = Integer.parseInt(proxyPort.getText());
 
         client = new TcpClient();
-        client.connect(serverAddress, serverPort, new ChannelInitializer<SocketChannel>() {
-            @Override
-            public void initChannel(SocketChannel ch) throws Exception {
-                // 流量监控
-                ch.pipeline().addLast(trafficHandler);
-                ch.pipeline().addLast(
-                        // 拆包粘包 initialBytesToStrip跳过的字节是我们定义的数据总长度，该类通过总长度可以解决粘包拆包为题
-                        new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4),
-                        new MessageDecoder(),
-                        new MessageEncoder(),
-                        // 心跳检测
-                        new IdleStateHandler(60, 30, 0)
-                );
-                ch.pipeline().addLast(new ClientHandler(proxy, "127.0.0.1", local));
-            }
-        });
+        try {
+            client.connect(serverAddress, serverPort, new ChannelInitializer<SocketChannel>() {
+                @Override
+                public void initChannel(SocketChannel ch) throws Exception {
+                    // 流量监控
+                    ch.pipeline().addLast(trafficHandler);
+                    ch.pipeline().addLast(
+                            // 拆包粘包 initialBytesToStrip跳过的字节是我们定义的数据总长度，该类通过总长度可以解决粘包拆包为题
+                            new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4),
+                            new MessageDecoder(),
+                            new MessageEncoder(),
+                            new ClientHandler(proxy, "127.0.0.1", local)
+                    );
+                }
+            });
+        } catch (Exception e) {
+            log.error("无法连接服务器");
+            return;
+        }
 
         traffic = new Thread(new Runnable() {
             @Override

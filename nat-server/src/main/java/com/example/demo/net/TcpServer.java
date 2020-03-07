@@ -9,14 +9,14 @@ public class TcpServer {
 
     private Channel channel;
 
-    public synchronized void bind(int port, ChannelInitializer channelInitializer) {
+    public synchronized void bind(int port, ChannelInitializer channelInitializer) throws Exception {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    .childHandler(channelInitializer)
+                    .childHandler(channelInitializer) // handler->bossGroup  childHandler->workerGroup
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
             channel = b.bind(port).sync().channel();
             channel.closeFuture().addListener((ChannelFutureListener) future -> {
@@ -26,7 +26,7 @@ public class TcpServer {
         } catch (Exception e) {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
-            e.printStackTrace();
+            throw e;
         }
     }
 

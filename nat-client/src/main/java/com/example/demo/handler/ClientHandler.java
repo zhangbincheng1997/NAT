@@ -1,8 +1,7 @@
 package com.example.demo.handler;
 
 import com.example.demo.protocol.Utils;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInitializer;
+import io.netty.channel.*;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -15,20 +14,19 @@ import com.example.demo.protocol.MessageType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class ClientHandler extends MessageHandler {
+public class ClientHandler extends SimpleChannelInboundHandler<Message> {
+
+    private TcpClient localConnection = new TcpClient();
 
     private int proxy;
     private String localAddress;
     private int localPort;
 
-    /**
-     * 保存本地连接（到web程序的channel）
-     */
-    private ConcurrentHashMap<String, MessageHandler> channelHandlerMap = new ConcurrentHashMap<>();
+    // 保存本地连接（到web程序的channel）
+    private ConcurrentHashMap<String, Channel> channelMap = new ConcurrentHashMap<>();
     private static ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
     public ClientHandler(int proxy, String localAddress, int localPort) {
@@ -37,90 +35,98 @@ public class ClientHandler extends MessageHandler {
         this.localPort = localPort;
     }
 
+    // 建立连接 发起注册请求
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        log.info("发起连接请求"); // TODO
         Message message = new Message();
         message.setType(MessageType.REGISTER);
         message.setChannelId("0000");
         message.setData(Utils.intToByteArray(proxy));
         ctx.writeAndFlush(message);
-        super.channelActive(ctx); // set TODO
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         channelGroup.close();
-        log.error("连接断开，请重启");
+        log.info("与服务器{}连接已经断开", ctx.channel().id()); // TODO
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        Message message = (Message) msg;
+    public void channelRead0(ChannelHandlerContext ctx, Message message) throws Exception {
         if (message.getType() == MessageType.REGISTER_RESULT) {
-            processRegisterResult(message);
+            processRegisterResult(ctx, message);
         } else if (message.getType() == MessageType.CONNECTED) {
-            processConnected(message);
+            processConnected(ctx, message);
         } else if (message.getType() == MessageType.DISCONNECTED) {
             processDisconnected(message);
         } else if (message.getType() == MessageType.DATA) {
             processData(message);
         } else if (message.getType() == MessageType.KEEPALIVE) {
             log.info("心跳检测成功...");
+        } else {
+            log.error("消息错误"); // UNKNOWN
         }
     }
 
-    private void processRegisterResult(Message message) {
+    private void processRegisterResult(ChannelHandlerContext ctx, Message message) {
         if (Arrays.equals(message.getData(), "success".getBytes())) {
             log.info("注册成功");
         } else {
-            log.info("注册失败");
+            log.info("注册失败"); // TODO 可能是端口占用
             ctx.close();
         }
     }
 
-    private void processConnected(Message message) throws Exception {
+    private void processConnected(ChannelHandlerContext ctx, Message message) throws Exception {
         String channelId = message.getChannelId();
+        log.info("客户端收到的 代理服务器的信息：{}", channelId);
         try {
-            ClientHandler thisHandler = this;
-            TcpClient localConnection = new TcpClient();
+            // 建立内网通向程序的通道
             localConnection.connect(localAddress, localPort, new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) throws Exception {
-                    LocalProxyHandler localProxyHandler = new LocalProxyHandler(thisHandler, channelId);
                     ch.pipeline().addLast(
                             new ByteArrayDecoder(),
                             new ByteArrayEncoder(),
-                            localProxyHandler);
-                    channelHandlerMap.put(channelId, localProxyHandler);
+                            new LocalProxyHandler(ctx.channel(), channelId));
+                    channelMap.put(channelId, ch); // 添加内网服务映射
                     channelGroup.add(ch);
                 }
             });
         } catch (Exception e) {
+            log.error("本地端口{}无效", localPort);
             Message result = new Message();
             result.setType(MessageType.DISCONNECTED);
             result.setChannelId(channelId);
             result.setData(null);
             ctx.writeAndFlush(result);
-            channelHandlerMap.remove(channelId);
-            throw e;
+            channelMap.remove(channelId);
         }
     }
 
     private void processDisconnected(Message message) {
         String channelId = message.getChannelId();
-        MessageHandler handler = channelHandlerMap.get(channelId);
-        if (handler != null) {
-            handler.getCtx().close();
-            channelHandlerMap.remove(channelId);
+        log.info("断开连接：服务端->客户端->代理客户端 {}", channelId);
+        Channel ctx = channelMap.get(channelId);
+        if (ctx != null) {
+            ctx.close();
+            channelMap.remove(channelId);
         }
     }
 
     private void processData(Message message) {
         String channelId = message.getChannelId();
-        MessageHandler handler = channelHandlerMap.get(channelId);
-        if (handler != null) {
-            ChannelHandlerContext ctx = handler.getCtx();
+        System.out.println("====" + channelId);
+        log.info("接受数据：服务端->客户端->代理客户端 {}", channelId);
+        Channel ctx = channelMap.get(channelId);
+        if (ctx != null) {
             ctx.writeAndFlush(message.getData());
         }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        log.error("捕获异常...", cause);
     }
 }

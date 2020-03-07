@@ -9,7 +9,7 @@ public class TcpClient {
 
     private Channel channel;
 
-    public void connect(String host, int port, ChannelInitializer channelInitializer) {
+    public void connect(String host, int port, ChannelInitializer channelInitializer) throws Exception {
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
@@ -21,7 +21,7 @@ public class TcpClient {
             channel.closeFuture().addListener((ChannelFutureListener) future -> workerGroup.shutdownGracefully());
         } catch (Exception e) {
             workerGroup.shutdownGracefully();
-            e.printStackTrace();
+            throw e;
         }
     }
 
