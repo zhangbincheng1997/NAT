@@ -24,6 +24,9 @@ KEEPALIVE(6);
 ## 拆包粘包
 LengthFieldBasedFrameDecoder
 
+## 心跳检测
+IdleStateHandler
+
 ## 转发流程
 | 机器 | 标识 | 端口 |
 | :---: | :---: | :---: |
@@ -64,3 +67,8 @@ http://localhost:8080/ <=> http://www.littleredhat1997.com:10000/
 - client->server：关闭连接
 - client->service：关闭连接
 - server->proxy：关闭连接
+
+5. 长时间不访问
+- proxy->client：关闭连接
+- client->service：关闭连接
+- service->server：关闭连接

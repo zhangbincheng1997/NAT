@@ -11,12 +11,6 @@ public class Utils {
         return result;
     }
 
-    /**
-     * byte[]转int
-     *
-     * @param bytes 需要转换成int的数组
-     * @return int值
-     */
     public static int byteArrayToInt(byte[] bytes) {
         int value = 0;
         for (int i = 0; i < 4; i++) {

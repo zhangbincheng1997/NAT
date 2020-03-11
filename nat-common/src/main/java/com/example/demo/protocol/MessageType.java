@@ -4,11 +4,12 @@ public enum MessageType {
 
     UNKNOWN(0),
     REGISTER(1),
-    REGISTER_RESULT(2),
-    CONNECTED(3),
-    DISCONNECTED(4),
-    DATA(5),
-    KEEPALIVE(6);
+    REGISTER_SUCCESS(2),
+    REGISTER_FAILURE(3),
+    CONNECTED(4),
+    DISCONNECTED(5),
+    DATA(6),
+    KEEPALIVE(7);
 
     private int code;
 

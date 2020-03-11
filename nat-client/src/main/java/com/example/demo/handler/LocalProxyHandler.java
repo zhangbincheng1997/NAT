@@ -18,26 +18,22 @@ public class LocalProxyHandler extends SimpleChannelInboundHandler<byte[]> {
         this.remoteChannelId = remoteChannelId;
     }
 
-    // 不需要channelActive
-
-    // 此方法会在接收到服务器数据后调用
     @Override
     public void channelRead0(ChannelHandlerContext ctx, byte[] msg) throws Exception {
-        Message message = new Message();
-        message.setType(MessageType.DATA);
-        message.setChannelId(remoteChannelId);
-        message.setData(msg);
-        log.info("接受数据：客户端->代理客户端->服务端 {}", remoteChannelId);
-        client2Server.writeAndFlush(message);// 直接转发回服务端
+        log.info("发送数据：{}", remoteChannelId);
+        Message message = Message.of(MessageType.DATA, remoteChannelId, msg);
+        client2Server.writeAndFlush(message);
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        // NONE
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        Message message = new Message();
-        message.setType(MessageType.DISCONNECTED);
-        message.setChannelId(remoteChannelId);
-        message.setData(null);
-        log.info("断开连接：客户端->代理客户端->服务端 {}", remoteChannelId);
+        Message message = Message.of(MessageType.DISCONNECTED, remoteChannelId);
+        log.info("断开连接：{}", remoteChannelId);
         client2Server.writeAndFlush(message);
     }
 }

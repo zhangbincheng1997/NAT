@@ -27,6 +27,15 @@ import javax.swing.border.TitledBorder;
 @Slf4j
 public class MainForm extends JFrame {
 
+    private static MainForm instance;
+
+    public static synchronized MainForm getInstance() {
+        if (instance == null) {
+            instance = new MainForm();
+        }
+        return instance;
+    }
+
     private static TcpClient client;
     private static Thread traffic;
 
@@ -163,7 +172,12 @@ public class MainForm extends JFrame {
     }
 
     public static void main(String[] args) {
-        new MainForm().setVisible(true);
+//        new MainForm().setVisible(true);
+        MainForm.getInstance().setVisible(true);
+    }
+
+    public void showMessage(String message) {
+        txtConsole.append(message + "\n");
     }
 
     private static final GlobalTrafficShapingHandler trafficHandler = new GlobalTrafficShapingHandler(Executors.newScheduledThreadPool(1), 1000);
@@ -193,6 +207,8 @@ public class MainForm extends JFrame {
                             new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4),
                             new MessageDecoder(),
                             new MessageEncoder(),
+                            // 心跳检测
+                            new IdleStateHandler(60, 30, 0),
                             new ClientHandler(proxy, "127.0.0.1", local)
                     );
                 }
@@ -210,7 +226,7 @@ public class MainForm extends JFrame {
                     try {
                         TimeUnit.SECONDS.sleep(1);
                     } catch (InterruptedException e) {
-                        log.error("线程退出", e);
+                        log.error("线程退出");
                     }
                     readSum.setText((trafficCounter.cumulativeReadBytes() / 1024) + " KB");
                     writeSum.setText((trafficCounter.cumulativeWrittenBytes() / 1024) + " KB");

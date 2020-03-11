@@ -16,16 +16,16 @@ public class TcpServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    .childHandler(channelInitializer) // handler->bossGroup  childHandler->workerGroup
+                    .childHandler(channelInitializer)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
             channel = b.bind(port).sync().channel();
             channel.closeFuture().addListener((ChannelFutureListener) future -> {
-                workerGroup.shutdownGracefully();
                 bossGroup.shutdownGracefully();
+                workerGroup.shutdownGracefully();
             });
         } catch (Exception e) {
-            workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
             throw e;
         }
     }

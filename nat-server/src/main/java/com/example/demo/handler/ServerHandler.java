@@ -24,43 +24,46 @@ public class ServerHandler extends SimpleChannelInboundHandler<Message> {
 
     private TcpServer remoteServer = new TcpServer();
     private static ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-    private boolean register = false;
-
-    // 不需要channelActive
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, Message message) throws Exception {
-        if (!register) {
-            if (message.getType() == MessageType.REGISTER) {
-                processRegister(ctx, message);
-            } else {
-                log.info("未注册端口...");
-                ctx.close();
-                return;
-            }
-        }
-        if (message.getType() == MessageType.DISCONNECTED) {
-            log.info("断开连接：客户端->服务器->代理服务器 {}", message.getChannelId());
-            channels.close(channel ->
-                    channel.id().asLongText().equals(message.getChannelId()));
-        } else if (message.getType() == MessageType.DATA) {
-            // 10000 -> 8888
-            log.info("接受数据：客户端->服务器->代理服务器 {}", message.getChannelId());
-            channels.writeAndFlush(message.getData(), channel ->
-                    channel.id().asLongText().equals(message.getChannelId()));
-        } else if (message.getType() == MessageType.KEEPALIVE) {
-            log.info("心跳检测成功...");
-        }
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        // NONE
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.info("断开连接：服务器->客户端 {}", ctx.channel().id());
+        log.info("与客户端断开连接：{}", ctx.channel().id());
         remoteServer.close();
     }
 
-    private void processRegister(ChannelHandlerContext ctx, Message message) {
-        int port = Utils.byteArrayToInt(message.getData()); // port
+    @Override
+    public void channelRead0(ChannelHandlerContext ctx, Message message) throws Exception {
+        switch (message.getType()) {
+            case UNKNOWN:
+                log.error("消息错误"); // UNKNOWN
+                break;
+            case REGISTER:
+                processRegister(ctx, Utils.byteArrayToInt(message.getData()));
+                break;
+            case REGISTER_SUCCESS:
+            case REGISTER_FAILURE:
+            case CONNECTED:
+                break;
+            case DISCONNECTED:
+                log.info("断开连接：{}", message.getChannelId());
+                channels.close(channel -> channel.id().asLongText().equals(message.getChannelId()));
+                break;
+            case DATA:
+                log.info("接受数据：{}", message.getChannelId());
+                channels.writeAndFlush(message.getData(), channel -> channel.id().asLongText().equals(message.getChannelId()));
+                break;
+            case KEEPALIVE:
+                log.info("心跳检测成功...");
+                break;
+        }
+    }
+
+    private void processRegister(ChannelHandlerContext ctx, int port) {
         InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
         String clientAddress = socketAddress.getAddress().getHostAddress();
         try {
@@ -74,43 +77,27 @@ public class ServerHandler extends SimpleChannelInboundHandler<Message> {
                     channels.add(ch);
                 }
             });
-            register = true;
-
-            Message sendBackMessage = new Message();
-            sendBackMessage.setType(MessageType.REGISTER_RESULT);
-            sendBackMessage.setChannelId("0000");
-            sendBackMessage.setData("success".getBytes());
-            ctx.writeAndFlush(sendBackMessage);
-
-            log.info("注册成功！客户端{}, 监听端口{}", clientAddress, port);
-            return;
+            Message message = Message.of(MessageType.REGISTER_SUCCESS);
+            ctx.writeAndFlush(message);
+            log.info("注册成功！客户端{}，监听端口：{}", clientAddress, port);
         } catch (Exception e) {
-            log.error("客户端注册失败，端口占用");
-            Message sendBackMessage = new Message();
-            sendBackMessage.setType(MessageType.REGISTER_RESULT);
-            sendBackMessage.setChannelId("0000");
-            sendBackMessage.setData("failure".getBytes());
-            ctx.writeAndFlush(sendBackMessage);
+            Message message = Message.of(MessageType.REGISTER_FAILURE);
+            ctx.writeAndFlush(message);
+            ctx.close();
+            log.error("注册失败！客户端{}，端口占用：{}", clientAddress, port);
         }
-        ctx.close();
     }
 
-    // 心跳检测
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent e = (IdleStateEvent) evt;
-            // IdleState.READER_IDLE 一段时间内没有数据接收
-            // IdleState.WRITER_IDLE 一段时间内没有数据发送
             if (e.state() == IdleState.READER_IDLE) {
-                log.info("一段时间内没有数据接收{}", ctx.channel().id());
+                log.info("一段时间内没有数据接收：{}", ctx.channel().id());
                 ctx.close();
             } else if (e.state() == IdleState.WRITER_IDLE) {
                 log.info("心跳检测...");
-                Message message = new Message();
-                message.setType(MessageType.KEEPALIVE);
-                message.setChannelId("0000");
-                message.setData(null);
+                Message message = Message.of(MessageType.KEEPALIVE);
                 ctx.writeAndFlush(message);
             }
         }
