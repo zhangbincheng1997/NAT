@@ -48,6 +48,7 @@ public class MainForm extends JFrame {
     private static JLabel writeSum;
     private static JLabel writeSpeed;
     private static JTextArea txtConsole;
+    private static JScrollPane panelConsole;
     private static JButton btn;
 
     public MainForm() {
@@ -62,13 +63,13 @@ public class MainForm extends JFrame {
         ImageIcon imageIcon = new ImageIcon(getClass().getResource("/icon.png"));
         setIconImage(imageIcon.getImage());
         setTitle("内网穿透客户端");
-        setSize(400, 300);
+        setSize(400, 400);
         setLocationRelativeTo(null);
         getContentPane().setLayout(null);
 
         JPanel settingPanel = new JPanel();
         settingPanel.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "网络参数", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-        settingPanel.setBounds(20, 10, 360, 110);
+        settingPanel.setBounds(20, 10, 360, 100);
         getContentPane().add(settingPanel);
         settingPanel.setLayout(null);
 
@@ -148,8 +149,8 @@ public class MainForm extends JFrame {
             }
         };
         txtConsole.setText("https://github.com/littleredhat1997/NAT\n");
-        JScrollPane panelConsole = new JScrollPane(txtConsole, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        panelConsole.setBounds(20, 120, 360, 100);
+        panelConsole = new JScrollPane(txtConsole, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        panelConsole.setLocation(20, 120);
         getContentPane().add(panelConsole);
 
         btn = new JButton("启动服务");
@@ -157,22 +158,31 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (btn.getText().equals("启动服务")) {
-                    btn.setText("停止服务");
-                    txtConsole.append("启动服务\n");
                     connect();
                 } else {
-                    btn.setText("启动服务");
-                    txtConsole.append("停止服务\n");
                     close();
                 }
             }
         });
-        btn.setBounds(20, 220, 360, 20);
         getContentPane().add(btn);
+
+        // 监听拖拽窗口事件
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int width = MainForm.this.getWidth() - 40;
+                int height = MainForm.this.getHeight() - 80;
+                settingPanel.setSize(width, settingPanel.getHeight());
+                txtConsole.setSize(width, txtConsole.getHeight());
+                panelConsole.setSize(width, height - panelConsole.getY());
+                btn.setSize(width, 20);
+                btn.setLocation(20, height);
+                super.componentResized(e);
+            }
+        });
     }
 
     public static void main(String[] args) {
-//        new MainForm().setVisible(true);
         MainForm.getInstance().setVisible(true);
     }
 
@@ -190,20 +200,20 @@ public class MainForm extends JFrame {
             JOptionPane.showMessageDialog(null, "请输入完整信息！", "提示消息", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        String serverAddress = remoteHost.getText();
+        String serverHost = remoteHost.getText();
         int serverPort = Integer.parseInt(remotePort.getText());
         int local = Integer.parseInt(localPort.getText());
         int proxy = Integer.parseInt(proxyPort.getText());
 
         client = new TcpClient();
         try {
-            client.connect(serverAddress, serverPort, new ChannelInitializer<SocketChannel>() {
+            client.connect(serverHost, serverPort, new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) throws Exception {
                     // 流量监控
                     ch.pipeline().addLast(trafficHandler);
                     ch.pipeline().addLast(
-                            // 拆包粘包 initialBytesToStrip跳过的字节是我们定义的数据总长度，该类通过总长度可以解决粘包拆包为题
+                            // 拆包粘包
                             new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4),
                             new MessageDecoder(),
                             new MessageEncoder(),
@@ -241,5 +251,15 @@ public class MainForm extends JFrame {
     private static void close() {
         if (client != null) client.close();
         if (traffic != null) traffic.interrupt();
+    }
+
+    public void stop() {
+        btn.setText("停止服务");
+//        txtConsole.append("启动服务\n");
+    }
+
+    public void restart() {
+        btn.setText("启动服务");
+//        txtConsole.append("停止服务\n");
     }
 }

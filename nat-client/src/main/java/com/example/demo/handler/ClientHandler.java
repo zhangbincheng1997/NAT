@@ -22,9 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClientHandler extends SimpleChannelInboundHandler<Message> {
 
     private TcpClient localConnection = new TcpClient();
-    private static ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    private static ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
-    // client to local net
+    // 代理客户端映射
     private ConcurrentHashMap<String, Channel> channelMap = new ConcurrentHashMap<>();
     private int proxy;
     private String localHost;
@@ -45,55 +45,49 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.info("与服务器断开连接：{}", ctx.channel().id());
-        ctx.close();
-        channelGroup.close();
+        log.info("与服务端断开连接...");
+        MainForm.getInstance().showMessage("与服务端断开连接...");
+        channels.close();
     }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Message message) throws Exception {
         switch (message.getType()) {
             case UNKNOWN:
-                log.error("消息错误"); // UNKNOWN
+                log.error("消息错误..."); // UNKNOWN
+                ctx.close();
                 break;
             case REGISTER:
                 break;
             case REGISTER_SUCCESS:
-                MainForm.getInstance().showMessage("注册成功");
-                log.info("注册成功");
+                log.info("注册成功！");
+                MainForm.getInstance().showMessage("注册成功！");
+                MainForm.getInstance().stop();
                 break;
             case REGISTER_FAILURE:
-                MainForm.getInstance().showMessage("注册失败，端口占用");
-                log.info("注册失败，端口占用");
+                log.info("注册失败，端口占用！");
+                MainForm.getInstance().showMessage("注册失败，端口占用！");
+                MainForm.getInstance().restart();
                 ctx.close();
                 break;
             case CONNECTED:
-                processConnected(ctx, message.getChannelId());
+                processConnected(ctx, message);
                 break;
             case DISCONNECTED:
-                String channelId = message.getChannelId();
-                log.info("客户端->内网：断开连接 {}", channelId);
-                MainForm.getInstance().showMessage("客户端->内网：断开连接"+channelId);
-                channelMap.get(channelId).close();
-                channelMap.remove(channelId);
+                processDisconnected(message);
                 break;
             case DATA:
-                channelId = message.getChannelId();
-                log.info("客户端->内网：传递数据 {}", channelId);
-                MainForm.getInstance().showMessage("客户端->内网：传递数据"+channelId);
-                channelMap.get(channelId).writeAndFlush(message.getData());
+                processData(message);
                 break;
             case KEEPALIVE:
                 log.info("心跳检测成功...");
-                MainForm.getInstance().showMessage("心跳检测成功......");
                 break;
         }
     }
 
-    private void processConnected(ChannelHandlerContext ctx, String channelId) {
-        log.info("客户端收到的服务器的信息：{}", channelId);
+    private void processConnected(ChannelHandlerContext ctx, Message message) {
+        String channelId = message.getChannelId();
         try {
-            // client to local net
             localConnection.connect(localHost, localPort, new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) throws Exception {
@@ -101,15 +95,38 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
                             new ByteArrayDecoder(),
                             new ByteArrayEncoder(),
                             new LocalProxyHandler(ctx.channel(), channelId));
+                    channels.add(ch);
                     channelMap.put(channelId, ch);
-                    channelGroup.add(ch);
+                    log.info("连接成功：{}", channelId);
+                    MainForm.getInstance().showMessage("连接成功：" + channelId);
                 }
             });
         } catch (Exception e) {
             log.error("本地端口无效：{}", localPort);
-            Message message = Message.of(MessageType.DISCONNECTED, channelId);
-            ctx.writeAndFlush(message);
+            MainForm.getInstance().showMessage("本地端口无效：" + localPort);
+            Message message_ = Message.of(MessageType.DISCONNECTED, channelId);
+            ctx.writeAndFlush(message_);
+        }
+    }
+
+    private void processDisconnected(Message message) {
+        String channelId = message.getChannelId();
+        Channel channel = channelMap.get(channelId);
+        if (channel != null) {
+            channel.close();
             channelMap.remove(channelId);
+            log.info("断开连接...");
+            MainForm.getInstance().showMessage("断开连接...");
+        }
+    }
+
+    private void processData(Message message) {
+        String channelId = message.getChannelId();
+        Channel channel = channelMap.get(channelId);
+        if (channel != null) {
+            channel.writeAndFlush(message.getData());
+            log.info("传递数据...");
+            MainForm.getInstance().showMessage("传递数据...");
         }
     }
 
@@ -130,6 +147,6 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        log.error("捕获异常...", cause);
+//        log.error("捕获异常...", cause);
     }
 }

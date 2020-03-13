@@ -32,7 +32,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Message> {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.info("与客户端断开连接：{}", ctx.channel().id());
+        log.info("与客户端断开连接...");
         remoteServer.close();
     }
 
@@ -40,7 +40,8 @@ public class ServerHandler extends SimpleChannelInboundHandler<Message> {
     public void channelRead0(ChannelHandlerContext ctx, Message message) throws Exception {
         switch (message.getType()) {
             case UNKNOWN:
-                log.error("消息错误"); // UNKNOWN
+                log.error("消息错误..."); // UNKNOWN
+                ctx.close();
                 break;
             case REGISTER:
                 processRegister(ctx, Utils.byteArrayToInt(message.getData()));
@@ -50,11 +51,11 @@ public class ServerHandler extends SimpleChannelInboundHandler<Message> {
             case CONNECTED:
                 break;
             case DISCONNECTED:
-                log.info("断开连接：{}", message.getChannelId());
+                log.info("断开连接...");
                 channels.close(channel -> channel.id().asLongText().equals(message.getChannelId()));
                 break;
             case DATA:
-                log.info("接受数据：{}", message.getChannelId());
+                log.info("传递数据...");
                 channels.writeAndFlush(message.getData(), channel -> channel.id().asLongText().equals(message.getChannelId()));
                 break;
             case KEEPALIVE:
