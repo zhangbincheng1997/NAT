@@ -1,4 +1,4 @@
-# 内网穿透 Netty
+# 内网穿透
 
 ![alt text](docs/home.png)
 
