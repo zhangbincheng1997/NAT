@@ -38,6 +38,7 @@ public class MainForm extends JFrame {
 
     private static TcpClient client;
     private static Thread traffic;
+    private static GlobalTrafficShapingHandler trafficHandler = new GlobalTrafficShapingHandler(Executors.newScheduledThreadPool(1), 1000);
 
     private static JTextField remoteHost;
     private static JTextField remotePort;
@@ -52,14 +53,6 @@ public class MainForm extends JFrame {
     private static JButton btn;
 
     public MainForm() {
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                close();
-                System.exit(0);
-                super.windowClosing(e);
-            }
-        });
         ImageIcon imageIcon = new ImageIcon(getClass().getResource("/icon.png"));
         setIconImage(imageIcon.getImage());
         setTitle("内网穿透客户端");
@@ -166,7 +159,6 @@ public class MainForm extends JFrame {
         });
         getContentPane().add(btn);
 
-        // 监听拖拽窗口事件
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -180,17 +172,20 @@ public class MainForm extends JFrame {
                 super.componentResized(e);
             }
         });
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                close();
+                System.exit(0);
+                super.windowClosing(e);
+            }
+        });
     }
 
     public static void main(String[] args) {
         MainForm.getInstance().setVisible(true);
     }
-
-    public void showMessage(String message) {
-        txtConsole.append(message + "\n");
-    }
-
-    private static final GlobalTrafficShapingHandler trafficHandler = new GlobalTrafficShapingHandler(Executors.newScheduledThreadPool(1), 1000);
 
     private static void connect() {
         if (remoteHost == null || StringUtils.isEmpty(remoteHost.getText())
@@ -255,11 +250,13 @@ public class MainForm extends JFrame {
 
     public void stop() {
         btn.setText("停止服务");
-//        txtConsole.append("启动服务\n");
     }
 
     public void restart() {
         btn.setText("启动服务");
-//        txtConsole.append("停止服务\n");
+    }
+
+    public void showMessage(String message) {
+        txtConsole.append(message + "\n");
     }
 }

@@ -40,7 +40,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Message> {
     public void channelRead0(ChannelHandlerContext ctx, Message message) throws Exception {
         switch (message.getType()) {
             case UNKNOWN:
-                log.error("消息错误..."); // UNKNOWN
+                log.error("消息错误...");
                 ctx.close();
                 break;
             case REGISTER:
@@ -51,11 +51,11 @@ public class ServerHandler extends SimpleChannelInboundHandler<Message> {
             case CONNECTED:
                 break;
             case DISCONNECTED:
-                log.info("断开连接...");
+                log.info("关闭连接...");
                 channels.close(channel -> channel.id().asLongText().equals(message.getChannelId()));
                 break;
             case DATA:
-                log.info("传递数据...");
+                log.info("转发数据...");
                 channels.writeAndFlush(message.getData(), channel -> channel.id().asLongText().equals(message.getChannelId()));
                 break;
             case KEEPALIVE:
@@ -78,6 +78,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Message> {
                     channels.add(ch);
                 }
             });
+            System.out.println(this.hashCode());
             Message message = Message.of(MessageType.REGISTER_SUCCESS);
             ctx.writeAndFlush(message);
             log.info("注册成功！客户端{}，监听端口：{}", clientAddress, port);

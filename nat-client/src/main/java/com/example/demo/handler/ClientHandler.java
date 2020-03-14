@@ -2,7 +2,10 @@ package com.example.demo.handler;
 
 import com.example.demo.MainForm;
 import com.example.demo.protocol.Utils;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -38,7 +41,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        log.info("注册端口......");
+        log.info("注册端口...");
         Message message = Message.of(MessageType.REGISTER, "", Utils.intToByteArray(proxy));
         ctx.writeAndFlush(message);
     }
@@ -47,6 +50,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.info("与服务端断开连接...");
         MainForm.getInstance().showMessage("与服务端断开连接...");
+        MainForm.getInstance().restart();
         channels.close();
     }
 
@@ -54,7 +58,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
     public void channelRead0(ChannelHandlerContext ctx, Message message) throws Exception {
         switch (message.getType()) {
             case UNKNOWN:
-                log.error("消息错误..."); // UNKNOWN
+                log.error("消息错误...");
                 ctx.close();
                 break;
             case REGISTER:
@@ -65,7 +69,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
                 MainForm.getInstance().stop();
                 break;
             case REGISTER_FAILURE:
-                log.info("注册失败，端口占用！");
+                log.error("注册失败，端口占用！");
                 MainForm.getInstance().showMessage("注册失败，端口占用！");
                 MainForm.getInstance().restart();
                 ctx.close();
@@ -97,15 +101,15 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
                             new LocalProxyHandler(ctx.channel(), channelId));
                     channels.add(ch);
                     channelMap.put(channelId, ch);
-                    log.info("连接成功：{}", channelId);
-                    MainForm.getInstance().showMessage("连接成功：" + channelId);
+                    log.info("建立连接成功：{}", channelId);
+                    MainForm.getInstance().showMessage("建立连接成功：" + channelId);
                 }
             });
         } catch (Exception e) {
             log.error("本地端口无效：{}", localPort);
             MainForm.getInstance().showMessage("本地端口无效：" + localPort);
-            Message message_ = Message.of(MessageType.DISCONNECTED, channelId);
-            ctx.writeAndFlush(message_);
+            MainForm.getInstance().restart();
+            ctx.close();
         }
     }
 
@@ -115,8 +119,8 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
         if (channel != null) {
             channel.close();
             channelMap.remove(channelId);
-            log.info("断开连接...");
-            MainForm.getInstance().showMessage("断开连接...");
+            log.info("关闭连接...");
+            MainForm.getInstance().showMessage("关闭连接...");
         }
     }
 
@@ -125,8 +129,8 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
         Channel channel = channelMap.get(channelId);
         if (channel != null) {
             channel.writeAndFlush(message.getData());
-            log.info("传递数据...");
-            MainForm.getInstance().showMessage("传递数据...");
+            log.info("转发数据...");
+            MainForm.getInstance().showMessage("转发数据...");
         }
     }
 
