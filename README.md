@@ -1,12 +1,10 @@
-# nat
-内网穿透 Intranet Penetration (Java + Netty)
-
-1. 微信、支付宝支付
-2. 小程序应用
-3. 个人网站
-4. ......
+# 内网穿透 Netty
 
 ![alt text](docs/home.png)
+
+## 启动
+1. java -jar nat-server.jar --port=8888
+2. java -jar nat-client.jar
 
 ## 映射示例
 1. 外网地址：http://www.littleredhat1997.com/
@@ -19,13 +17,6 @@
 | 客户端 | Client | - |
 | 服务端 | Server | 8888 |
 | 外网代理 | Remote | 10000 |
-
-## 流程图
-![alt text](docs/flow.png)
-
-## 客户端
-![alt text](docs/app.png)
-
 
 ## 自定义协议
 `消息体` = `消息体总长度` + `TYPE` + `length(CHANNEL_ID)` + `CHANNEL_ID` + `length(DATA)` + `DATA`
@@ -86,11 +77,11 @@ public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exc
     if (evt instanceof IdleStateEvent) {
         IdleStateEvent e = (IdleStateEvent) evt;
         if (e.state() == IdleState.READER_IDLE) {
-            // 
+            // TODO
         } else if (e.state() == IdleState.WRITER_IDLE) {
-            // 
+            // TODO
         } else if (e.state() == IdleState.ALL_IDLE) {
-            // 
+            // TODO
         }
     }
 }

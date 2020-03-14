@@ -9,6 +9,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,16 +18,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
+    @Value("${port}")
+    private Integer port;
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 
-    private static final int PORT = 8888;
-
     @Override
     public void run(String... args) throws Exception {
         TcpServer server = new TcpServer();
-        server.bind(PORT, new ChannelInitializer<SocketChannel>() {
+        server.bind(port, new ChannelInitializer<SocketChannel>() {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(
@@ -39,6 +41,6 @@ public class Application implements CommandLineRunner {
                         new ServerHandler());
             }
         });
-        log.info("启动服务器：" + PORT);
+        log.info("启动服务器：" + port);
     }
 }

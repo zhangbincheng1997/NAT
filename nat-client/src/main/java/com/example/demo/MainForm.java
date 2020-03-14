@@ -220,6 +220,7 @@ public class MainForm extends JFrame {
             });
         } catch (Exception e) {
             log.error("无法连接服务器");
+            txtConsole.append("无法连接服务器\n");
             return;
         }
 
@@ -231,7 +232,7 @@ public class MainForm extends JFrame {
                     try {
                         TimeUnit.SECONDS.sleep(1);
                     } catch (InterruptedException e) {
-                        log.error("线程退出");
+                        // NONE
                     }
                     readSum.setText((trafficCounter.cumulativeReadBytes() / 1024) + " KB");
                     writeSum.setText((trafficCounter.cumulativeWrittenBytes() / 1024) + " KB");
