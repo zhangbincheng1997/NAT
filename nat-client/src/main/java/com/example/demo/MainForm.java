@@ -213,7 +213,7 @@ public class MainForm extends JFrame {
                             new MessageDecoder(),
                             new MessageEncoder(),
                             // 心跳检测
-                            new IdleStateHandler(60, 30, 0),
+                            new IdleStateHandler(0, 30, 0),
                             new ClientHandler(proxy, "127.0.0.1", local)
                     );
                 }

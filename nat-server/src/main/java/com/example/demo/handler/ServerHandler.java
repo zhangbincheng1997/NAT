@@ -94,13 +94,10 @@ public class ServerHandler extends SimpleChannelInboundHandler<Message> {
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent e = (IdleStateEvent) evt;
+            // 服务端负责心跳检测
             if (e.state() == IdleState.READER_IDLE) {
                 log.info("一段时间内没有数据接收：{}", ctx.channel().id());
                 ctx.close();
-            } else if (e.state() == IdleState.WRITER_IDLE) {
-                log.info("心跳检测...");
-                Message message = Message.of(MessageType.KEEPALIVE);
-                ctx.writeAndFlush(message);
             }
         }
     }

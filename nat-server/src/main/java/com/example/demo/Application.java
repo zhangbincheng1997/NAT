@@ -37,7 +37,7 @@ public class Application implements CommandLineRunner {
                         new MessageDecoder(),
                         new MessageEncoder(),
                         // 心跳检测
-                        new IdleStateHandler(60, 30, 0),
+                        new IdleStateHandler(60, 0, 0),
                         new ServerHandler());
             }
         });

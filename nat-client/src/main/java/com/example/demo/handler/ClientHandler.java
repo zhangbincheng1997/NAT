@@ -84,7 +84,6 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
                 processData(message);
                 break;
             case KEEPALIVE:
-                log.info("心跳检测成功...");
                 break;
         }
     }
@@ -98,7 +97,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
                     ch.pipeline().addLast(
                             new ByteArrayDecoder(),
                             new ByteArrayEncoder(),
-                            new LocalProxyHandler(ctx.channel(), channelId));
+                            new LocalProxyHandler(ctx, channelId));
                     channels.add(ch);
                     channelMap.put(channelId, ch);
                     log.info("建立连接成功：{}", channelId);
@@ -138,10 +137,8 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent e = (IdleStateEvent) evt;
-            if (e.state() == IdleState.READER_IDLE) {
-                log.info("一段时间内没有数据接收：{}", ctx.channel().id());
-                ctx.close();
-            } else if (e.state() == IdleState.WRITER_IDLE) {
+            // 客户端负责发送心跳包
+            if (e.state() == IdleState.WRITER_IDLE) {
                 log.info("心跳检测...");
                 Message message = Message.of(MessageType.KEEPALIVE);
                 ctx.writeAndFlush(message);
@@ -151,6 +148,6 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-//        log.error("捕获异常...", cause);
+        log.error("捕获异常...", cause);
     }
 }

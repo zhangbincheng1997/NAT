@@ -1,6 +1,5 @@
 package com.example.demo.handler;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import com.example.demo.protocol.Message;
 import com.example.demo.protocol.MessageType;
@@ -10,10 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LocalProxyHandler extends SimpleChannelInboundHandler<byte[]> {
 
-    private Channel client2Server;
+    private ChannelHandlerContext client2Server;
     private String remoteChannelId;
 
-    public LocalProxyHandler(Channel client2Server, String remoteChannelId) {
+    public LocalProxyHandler(ChannelHandlerContext client2Server, String remoteChannelId) {
         this.client2Server = client2Server;
         this.remoteChannelId = remoteChannelId;
     }

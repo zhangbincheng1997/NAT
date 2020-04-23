@@ -6,7 +6,7 @@
 1. java -jar nat-server.jar --port=8888
 2. java -jar nat-client.jar
 
-## 映射示例
+## 端口转发
 1. 外网地址：http://www.littleredhat1997.com/
 2. 内网地址：http://localhost/
 3. http://www.littleredhat1997.com:10000/ <=> http://localhost:8080/
