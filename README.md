@@ -1,9 +1,9 @@
 # 内网穿透
 
-![alt text](docs/home.png)
+![alt text](docs/flow.png)
 
 ## 启动
-1. java -jar nat-server.jar --port=8888
+1. java -jar nat-server.jar [port, defalut 8888]
 2. java -jar nat-client.jar
 
 ## 端口转发

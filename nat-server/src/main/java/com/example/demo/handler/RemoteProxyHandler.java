@@ -17,21 +17,21 @@ public class RemoteProxyHandler extends SimpleChannelInboundHandler<byte[]> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        log.info("请求连接：id={}", ctx.channel().id().asLongText());
+        log.info("请求连接：" + ctx.channel().id().asLongText());
         Message message = Message.of(MessageType.CONNECTED, ctx.channel().id().asLongText());
         server2client.writeAndFlush(message);
     }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, byte[] msg) throws Exception {
-        log.info("请求数据：id={}", ctx.channel().id().asLongText());
+        log.info("请求转发：" + ctx.channel().id().asLongText());
         Message message = Message.of(MessageType.DATA, ctx.channel().id().asLongText(), msg);
         server2client.writeAndFlush(message);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.info("请求关闭：id={}", ctx.channel().id().asLongText());
+        log.info("关闭成功：" + ctx.channel().id().asLongText());
         Message message = Message.of(MessageType.DISCONNECTED, ctx.channel().id().asLongText());
         server2client.writeAndFlush(message);
     }

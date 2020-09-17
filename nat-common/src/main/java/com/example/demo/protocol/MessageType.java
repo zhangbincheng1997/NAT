@@ -7,8 +7,8 @@ public enum MessageType {
     REGISTER_SUCCESS(2),
     REGISTER_FAILURE(3),
     CONNECTED(4),
-    DISCONNECTED(5),
-    DATA(6),
+    DATA(5),
+    DISCONNECTED(6),
     KEEPALIVE(7);
 
     private int code;

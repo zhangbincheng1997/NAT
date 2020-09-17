@@ -23,11 +23,11 @@ import java.net.InetSocketAddress;
 public class ServerHandler extends SimpleChannelInboundHandler<Message> {
 
     private TcpServer remoteServer = new TcpServer();
-    private static ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    private ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE); // 全局单例
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        // NONE
+        log.info("与客户端连接...");
     }
 
     @Override
@@ -44,49 +44,48 @@ public class ServerHandler extends SimpleChannelInboundHandler<Message> {
                 ctx.close();
                 break;
             case REGISTER:
-                processRegister(ctx, Utils.byteArrayToInt(message.getData()));
+                processRegister(ctx, message);
                 break;
-            case REGISTER_SUCCESS:
-            case REGISTER_FAILURE:
             case CONNECTED:
-                break;
-            case DISCONNECTED:
-                log.info("关闭连接...");
-                channels.close(channel -> channel.id().asLongText().equals(message.getChannelId()));
+                log.error("连接成功！");
                 break;
             case DATA:
-                log.info("转发数据...");
-                channels.writeAndFlush(message.getData(), channel -> channel.id().asLongText().equals(message.getChannelId()));
+                log.error("转发成功！");
+                channelGroup.writeAndFlush(message.getData(), channel -> channel.id().asLongText().equals(message.getChannelId()));
+                break;
+            case DISCONNECTED:
+                log.error("请求关闭...");
+                channelGroup.close(channel -> channel.id().asLongText().equals(message.getChannelId()));
                 break;
             case KEEPALIVE:
-                log.info("心跳检测成功...");
+                log.info("心跳检测..."); // 服务端接收心跳包
                 break;
         }
     }
 
-    private void processRegister(ChannelHandlerContext ctx, int port) {
+    private void processRegister(ChannelHandlerContext ctx, Message message) {
         InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
         String clientAddress = socketAddress.getAddress().getHostAddress();
+        int port = Utils.byteArrayToInt(message.getData());
         try {
-            remoteServer.bind(port, new ChannelInitializer<SocketChannel>() {
+            remoteServer.bind(port, new ChannelInitializer<SocketChannel>() { // 10000
                 @Override
                 public void initChannel(SocketChannel ch) throws Exception {
                     ch.pipeline().addLast(
                             new ByteArrayDecoder(),
                             new ByteArrayEncoder(),
-                            new RemoteProxyHandler(ctx));
-                    channels.add(ch);
+                            new RemoteProxyHandler(ctx)); // client <-> server
+                    channelGroup.add(ch); // 代理服务器Group
                 }
             });
-            System.out.println(this.hashCode());
-            Message message = Message.of(MessageType.REGISTER_SUCCESS);
-            ctx.writeAndFlush(message);
             log.info("注册成功！客户端{}，监听端口：{}", clientAddress, port);
+            Message result = Message.of(MessageType.REGISTER_SUCCESS);
+            ctx.writeAndFlush(result);
         } catch (Exception e) {
-            Message message = Message.of(MessageType.REGISTER_FAILURE);
-            ctx.writeAndFlush(message);
-            ctx.close();
             log.error("注册失败！客户端{}，端口占用：{}", clientAddress, port);
+            Message result = Message.of(MessageType.REGISTER_FAILURE);
+            ctx.writeAndFlush(result);
+            ctx.close();
         }
     }
 
@@ -105,5 +104,6 @@ public class ServerHandler extends SimpleChannelInboundHandler<Message> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         log.error("捕获异常...", cause);
+        ctx.close();
     }
 }

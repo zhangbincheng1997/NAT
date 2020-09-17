@@ -1,5 +1,6 @@
 package com.example.demo.handler;
 
+import com.example.demo.MainForm;
 import io.netty.channel.ChannelHandlerContext;
 import com.example.demo.protocol.Message;
 import com.example.demo.protocol.MessageType;
@@ -10,29 +11,34 @@ import lombok.extern.slf4j.Slf4j;
 public class LocalProxyHandler extends SimpleChannelInboundHandler<byte[]> {
 
     private ChannelHandlerContext client2Server;
-    private String remoteChannelId;
+    private String remoteProxyChannelId;
 
-    public LocalProxyHandler(ChannelHandlerContext client2Server, String remoteChannelId) {
+    public LocalProxyHandler(ChannelHandlerContext client2Server, String remoteProxyChannelId) {
         this.client2Server = client2Server;
-        this.remoteChannelId = remoteChannelId;
+        this.remoteProxyChannelId = remoteProxyChannelId;
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        // NONE
+        log.info("连接成功：" + remoteProxyChannelId);
+        MainForm.getInstance().showMessage("连接成功：" + remoteProxyChannelId);
+        Message message = Message.of(MessageType.CONNECTED, remoteProxyChannelId);
+        client2Server.writeAndFlush(message);
     }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, byte[] msg) throws Exception {
-        log.info("返回数据：id={}", remoteChannelId);
-        Message message = Message.of(MessageType.DATA, remoteChannelId, msg);
+        log.info("转发成功：" + remoteProxyChannelId);
+        MainForm.getInstance().showMessage("转发成功：" + remoteProxyChannelId);
+        Message message = Message.of(MessageType.DATA, remoteProxyChannelId, msg);
         client2Server.writeAndFlush(message);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.info("返回结果：id={}", remoteChannelId);
-        Message message = Message.of(MessageType.DISCONNECTED, remoteChannelId);
+        log.info("请求关闭：" + remoteProxyChannelId);
+        MainForm.getInstance().showMessage("请求关闭：" + remoteProxyChannelId);
+        Message message = Message.of(MessageType.DISCONNECTED, remoteProxyChannelId);
         client2Server.writeAndFlush(message);
     }
 }
