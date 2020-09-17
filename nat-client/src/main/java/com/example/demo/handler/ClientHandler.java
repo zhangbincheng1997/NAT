@@ -6,6 +6,8 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
@@ -14,6 +16,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 import com.example.demo.net.TcpClient;
 import com.example.demo.protocol.Message;
 import com.example.demo.protocol.MessageType;
+import io.netty.util.concurrent.GlobalEventExecutor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClientHandler extends SimpleChannelInboundHandler<Message> {
 
     private TcpClient localConnection = new TcpClient();
+    private ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
     // 代理映射
     public static ConcurrentHashMap<String, Channel> channelMap = new ConcurrentHashMap<>();
@@ -49,6 +53,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
         MainForm.getInstance().showMessage("与服务端断开连接...");
         MainForm.getInstance().start();
         localConnection.close();
+        channelGroup.close();
     }
 
     @Override
@@ -100,7 +105,8 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
                             new ByteArrayDecoder(),
                             new ByteArrayEncoder(),
                             new LocalProxyHandler(ctx, remoteProxyChannelId)); // client <-> server
-                    channelMap.put(remoteProxyChannelId, ch); // 代理服务器ID和代理客户器Channel的映射
+                    channelGroup.add(ch); // 代理客户端Group
+                    channelMap.put(remoteProxyChannelId, ch); // 代理服务端ID和代理客户端Channel的映射
                 }
             });
         } catch (Exception e) {

@@ -23,7 +23,7 @@ import java.net.InetSocketAddress;
 public class ServerHandler extends SimpleChannelInboundHandler<Message> {
 
     private TcpServer remoteServer = new TcpServer();
-    private ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE); // 全局单例
+    private ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -34,6 +34,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Message> {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.info("与客户端断开连接...");
         remoteServer.close();
+        channelGroup.close();
     }
 
     @Override
@@ -75,7 +76,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Message> {
                             new ByteArrayDecoder(),
                             new ByteArrayEncoder(),
                             new RemoteProxyHandler(ctx)); // client <-> server
-                    channelGroup.add(ch); // 代理服务器Group
+                    channelGroup.add(ch); // 代理服务端Group
                 }
             });
             log.info("注册成功！客户端{}，监听端口：{}", clientAddress, port);
