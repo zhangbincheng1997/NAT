@@ -1,10 +1,10 @@
-package com.example.demo.common.codec;
+package com.zzz.nat.common.codec;
 
+import com.zzz.nat.common.protocol.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import com.example.demo.common.protocol.Message;
-import com.example.demo.common.protocol.MessageType;
+import com.zzz.nat.common.protocol.MessageType;
 
 import java.util.List;
 

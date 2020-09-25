@@ -1,7 +1,5 @@
-package com.example.demo.common.handler;
+package com.zzz.nat.common.handler;
 
-import com.example.demo.common.protocol.Message;
-import com.example.demo.common.protocol.MessageType;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
@@ -9,17 +7,16 @@ import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public abstract class ClientCommonHandler<T> extends SimpleChannelInboundHandler<T> {
+public abstract class ServerCommonHandler<T> extends SimpleChannelInboundHandler<T> {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent e = (IdleStateEvent) evt;
-            // 客户端负责发送心跳包
-            if (e.state() == IdleState.WRITER_IDLE) {
-                log.info("心跳检测...");
-                Message message = Message.of(MessageType.KEEPALIVE);
-                ctx.writeAndFlush(message);
+            // 服务端负责心跳检测
+            if (e.state() == IdleState.READER_IDLE) {
+                log.info("一段时间内没有数据接收：{}", ctx.channel().id());
+                ctx.close();
             }
         }
     }

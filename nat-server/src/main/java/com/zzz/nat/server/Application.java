@@ -1,9 +1,9 @@
-package com.example.demo.server;
+package com.zzz.nat.server;
 
-import com.example.demo.common.codec.MessageDecoder;
-import com.example.demo.common.codec.MessageEncoder;
-import com.example.demo.server.handler.ServerHandler;
-import com.example.demo.server.net.TcpServer;
+import com.zzz.nat.common.codec.MessageDecoder;
+import com.zzz.nat.common.codec.MessageEncoder;
+import com.zzz.nat.server.handler.ServerHandler;
+import com.zzz.nat.server.net.TcpServer;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;

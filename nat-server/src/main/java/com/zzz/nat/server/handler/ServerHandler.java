@@ -1,8 +1,8 @@
-package com.example.demo.server.handler;
+package com.zzz.nat.server.handler;
 
-import com.example.demo.common.handler.ServerCommonHandler;
-import com.example.demo.server.net.TcpServer;
-import com.example.demo.common.protocol.Utils;
+import com.zzz.nat.common.handler.ServerCommonHandler;
+import com.zzz.nat.server.net.TcpServer;
+import com.zzz.nat.common.protocol.Utils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.group.ChannelGroup;
@@ -11,8 +11,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.util.concurrent.GlobalEventExecutor;
-import com.example.demo.common.protocol.Message;
-import com.example.demo.common.protocol.MessageType;
+import com.zzz.nat.common.protocol.Message;
+import com.zzz.nat.common.protocol.MessageType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;

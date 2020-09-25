@@ -1,9 +1,9 @@
-package com.example.demo.client.handler;
+package com.zzz.nat.client.handler;
 
-import com.example.demo.client.MainForm;
+import com.zzz.nat.client.MainForm;
 import io.netty.channel.ChannelHandlerContext;
-import com.example.demo.common.protocol.Message;
-import com.example.demo.common.protocol.MessageType;
+import com.zzz.nat.common.protocol.Message;
+import com.zzz.nat.common.protocol.MessageType;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 

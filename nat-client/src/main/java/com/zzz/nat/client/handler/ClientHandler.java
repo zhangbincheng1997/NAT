@@ -1,8 +1,8 @@
-package com.example.demo.client.handler;
+package com.zzz.nat.client.handler;
 
-import com.example.demo.client.MainForm;
-import com.example.demo.common.handler.ClientCommonHandler;
-import com.example.demo.common.protocol.Utils;
+import com.zzz.nat.client.MainForm;
+import com.zzz.nat.common.handler.ClientCommonHandler;
+import com.zzz.nat.common.protocol.Utils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
@@ -11,9 +11,9 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
-import com.example.demo.client.net.TcpClient;
-import com.example.demo.common.protocol.Message;
-import com.example.demo.common.protocol.MessageType;
+import com.zzz.nat.client.net.TcpClient;
+import com.zzz.nat.common.protocol.Message;
+import com.zzz.nat.common.protocol.MessageType;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import lombok.extern.slf4j.Slf4j;
 
