@@ -21,7 +21,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.example.demo.Application</mainClass>
+                  <mainClass>com.example.demo.server.Application</mainClass>
                 </transformer>
               </transformers>
             </configuration>
