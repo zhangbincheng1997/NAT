@@ -1,26 +1,24 @@
-package com.example.demo.handler;
+package com.example.demo.server.handler;
 
-import com.example.demo.net.TcpServer;
-import com.example.demo.protocol.Utils;
+import com.example.demo.common.handler.ServerCommonHandler;
+import com.example.demo.server.net.TcpServer;
+import com.example.demo.common.protocol.Utils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
-import io.netty.handler.timeout.IdleState;
-import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.concurrent.GlobalEventExecutor;
-import com.example.demo.protocol.Message;
-import com.example.demo.protocol.MessageType;
+import com.example.demo.common.protocol.Message;
+import com.example.demo.common.protocol.MessageType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 
 @Slf4j
-public class ServerHandler extends SimpleChannelInboundHandler<Message> {
+public class ServerHandler extends ServerCommonHandler<Message> {
 
     private TcpServer remoteServer = new TcpServer();
     private ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
@@ -59,7 +57,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<Message> {
                 channelGroup.close(channel -> channel.id().asLongText().equals(message.getChannelId()));
                 break;
             case KEEPALIVE:
-                log.info("心跳检测..."); // 服务端接收心跳包
+                log.info("扑通扑通...");
                 break;
         }
     }
@@ -88,23 +86,5 @@ public class ServerHandler extends SimpleChannelInboundHandler<Message> {
             ctx.writeAndFlush(result);
             ctx.close();
         }
-    }
-
-    @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        if (evt instanceof IdleStateEvent) {
-            IdleStateEvent e = (IdleStateEvent) evt;
-            // 服务端负责心跳检测
-            if (e.state() == IdleState.READER_IDLE) {
-                log.info("一段时间内没有数据接收：{}", ctx.channel().id());
-                ctx.close();
-            }
-        }
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        log.error("捕获异常...", cause);
-        ctx.close();
     }
 }

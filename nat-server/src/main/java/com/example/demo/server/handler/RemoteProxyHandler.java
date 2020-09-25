@@ -1,8 +1,8 @@
-package com.example.demo.handler;
+package com.example.demo.server.handler;
 
 import io.netty.channel.ChannelHandlerContext;
-import com.example.demo.protocol.Message;
-import com.example.demo.protocol.MessageType;
+import com.example.demo.common.protocol.Message;
+import com.example.demo.common.protocol.MessageType;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 

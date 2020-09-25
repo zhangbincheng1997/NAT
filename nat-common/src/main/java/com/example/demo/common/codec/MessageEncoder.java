@@ -1,9 +1,9 @@
-package com.example.demo.codec;
+package com.example.demo.common.codec;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-import com.example.demo.protocol.Message;
+import com.example.demo.common.protocol.Message;
 
 /**
  * 消息体 = 消息体总长度 + TYPE + length(CHANNEL_ID) + CHANNEL_ID + length(DATA) + DATA

@@ -1,4 +1,4 @@
-package com.example.demo.net;
+package com.example.demo.client.net;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;

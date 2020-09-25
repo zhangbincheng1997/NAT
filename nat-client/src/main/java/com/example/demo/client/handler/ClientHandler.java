@@ -1,28 +1,26 @@
-package com.example.demo.handler;
+package com.example.demo.client.handler;
 
-import com.example.demo.MainForm;
-import com.example.demo.protocol.Utils;
+import com.example.demo.client.MainForm;
+import com.example.demo.common.handler.ClientCommonHandler;
+import com.example.demo.common.protocol.Utils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
-import io.netty.handler.timeout.IdleState;
-import io.netty.handler.timeout.IdleStateEvent;
-import com.example.demo.net.TcpClient;
-import com.example.demo.protocol.Message;
-import com.example.demo.protocol.MessageType;
+import com.example.demo.client.net.TcpClient;
+import com.example.demo.common.protocol.Message;
+import com.example.demo.common.protocol.MessageType;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class ClientHandler extends SimpleChannelInboundHandler<Message> {
+public class ClientHandler extends ClientCommonHandler<Message> {
 
     private TcpClient localConnection = new TcpClient();
     private ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
@@ -89,9 +87,6 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
                 MainForm.getInstance().showMessage("关闭成功！");
                 processDisconnected(message);
                 break;
-            case KEEPALIVE:
-                // NONE 客户端发送心跳包
-                break;
         }
     }
 
@@ -133,24 +128,5 @@ public class ClientHandler extends SimpleChannelInboundHandler<Message> {
             channel.close();
             channelMap.remove(channelId);
         }
-    }
-
-    @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        if (evt instanceof IdleStateEvent) {
-            IdleStateEvent e = (IdleStateEvent) evt;
-            // 客户端负责发送心跳包
-            if (e.state() == IdleState.WRITER_IDLE) {
-                log.info("心跳检测...");
-                Message message = Message.of(MessageType.KEEPALIVE);
-                ctx.writeAndFlush(message);
-            }
-        }
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        log.error("捕获异常...", cause);
-        ctx.close();
     }
 }

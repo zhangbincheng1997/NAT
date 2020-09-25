@@ -1,4 +1,4 @@
-package com.example.demo.protocol;
+package com.example.demo.common.protocol;
 
 public enum MessageType {
 

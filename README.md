@@ -6,17 +6,17 @@
 1. java -jar nat-server.jar [port, defalut 8888]
 2. java -jar nat-client.jar
 
-## 端口转发
+## 规则（示例）
 1. 外网地址：http://www.littleredhat1997.com/
-2. 内网地址：http://localhost/
-3. http://www.littleredhat1997.com:10000/ <=> http://localhost:8080/
+2. 内网地址：127.0.0.1
+3. http://www.littleredhat1997.com:10000/ <=> 127.0.0.1:8080
 
 | 机器 | 标识 | 端口（默认） |
 | :---: | :---: | :---: |
-| 内网代理 | Local | 8080 |
-| 客户端 | Client | - |
-| 服务端 | Server | 8888 |
 | 外网代理 | Remote | 10000 |
+| 服务端 | Server | 8888 |
+| 客户端 | Client | - |
+| 内网代理 | Local | 8080 |
 
 ## 自定义协议
 `消息体` = `消息体总长度` + `TYPE` + `length(CHANNEL_ID)` + `CHANNEL_ID` + `length(DATA)` + `DATA`
@@ -36,12 +36,12 @@ KEEPALIVE(7);
 ```
 
 ## 拆包粘包 LengthFieldBasedFrameDecoder
-参数：
-1. maxFrameLength: 数据包的最大长度
-2. lengthFieldOffset: 长度域的偏移量
-3. lengthFieldLength: 长度域的字节数
-4. lengthAdjustment: 长度域的偏移量矫正
-5. initialBytesToStrip: 丢弃的起始字节数
+Parameters:
+1. maxFrameLength - the maximum length of the frame. If the length of the frame is greater than this value, TooLongFrameException will be thrown.
+2. lengthFieldOffset - the offset of the length field
+3. lengthFieldLength - the length of the length field
+4. lengthAdjustment - the compensation value to add to the value of the length field
+5. initialBytesToStrip - the number of first bytes to strip out from the decoded frame
 
 示例：
 ```
@@ -63,10 +63,10 @@ public class MessageDecoder extends ByteToMessageDecoder {
 ```
 
 ## 心跳检测 IdleStateHandler
-参数：
-1. readerIdleTimeSeconds: 当在指定时间段内未执行任何读操作时触发
-2. writerIdleTimeSeconds: 当在指定的时间内未执行任何写操作时触发
-3. allIdleTimeSeconds: 当在指定的时间内未执行任何读或写操作时触发
+Parameters:
+1. readerIdleTimeSeconds - an IdleStateEvent whose state is IdleState.READER_IDLE will be triggered when no read was performed for the specified period of time. Specify 0 to disable.
+2. writerIdleTimeSeconds - an IdleStateEvent whose state is IdleState.WRITER_IDLE will be triggered when no write was performed for the specified period of time. Specify 0 to disable.
+3. allIdleTimeSeconds - an IdleStateEvent whose state is IdleState.ALL_IDLE will be triggered when neither read nor write was performed for the specified period of time. Specify 0 to disable.
 
 示例：
 ```

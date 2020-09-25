@@ -1,9 +1,9 @@
-package com.example.demo;
+package com.example.demo.client;
 
-import com.example.demo.codec.MessageDecoder;
-import com.example.demo.codec.MessageEncoder;
-import com.example.demo.handler.ClientHandler;
-import com.example.demo.net.TcpClient;
+import com.example.demo.common.codec.MessageDecoder;
+import com.example.demo.common.codec.MessageEncoder;
+import com.example.demo.client.handler.ClientHandler;
+import com.example.demo.client.net.TcpClient;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
@@ -33,12 +33,11 @@ public class MainForm extends JFrame {
 
     private static TcpClient client;
 
-    private static JTextField remoteHost;
-    private static JTextField remotePort;
+    private static JTextField serverHost;
+    private static JTextField serverPort;
     private static JTextField localPort;
     private static JTextField proxyPort;
     private static JTextArea txtConsole;
-    private static JScrollPane panelConsole;
     private static JButton btn;
 
     public MainForm() {
@@ -55,19 +54,19 @@ public class MainForm extends JFrame {
         getContentPane().add(settingPanel);
         settingPanel.setLayout(null);
 
-        JLabel remoteText = new JLabel("绑定域名：");
+        JLabel remoteText = new JLabel("SERVER：");
         remoteText.setBounds(20, 20, 80, 20);
         settingPanel.add(remoteText);
 
-        remoteHost = new JTextField();
-        remoteHost.setText("127.0.0.1");
-        remoteHost.setBounds(80, 20, 140, 20);
-        settingPanel.add(remoteHost);
+        serverHost = new JTextField();
+        serverHost.setText("127.0.0.1");
+        serverHost.setBounds(80, 20, 140, 20);
+        settingPanel.add(serverHost);
 
-        remotePort = new JTextField();
-        remotePort.setText("8888");
-        remotePort.setBounds(220, 20, 80, 20);
-        settingPanel.add(remotePort);
+        serverPort = new JTextField();
+        serverPort.setText("8888");
+        serverPort.setBounds(220, 20, 80, 20);
+        settingPanel.add(serverPort);
 
         JLabel localText = new JLabel("本地端口：");
         localText.setBounds(20, 40, 80, 20);
@@ -99,7 +98,7 @@ public class MainForm extends JFrame {
             }
         };
         txtConsole.setText("https://github.com/littleredhat1997/NAT\n");
-        panelConsole = new JScrollPane(txtConsole, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        JScrollPane panelConsole = new JScrollPane(txtConsole, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         panelConsole.setLocation(20, 100);
         getContentPane().add(panelConsole);
 
@@ -144,15 +143,15 @@ public class MainForm extends JFrame {
     }
 
     private static void connect() {
-        if (remoteHost == null || remoteHost.getText().equals("")
-                || remotePort == null || remotePort.getText().equals("")
+        if (serverHost == null || serverHost.getText().equals("")
+                || serverPort == null || serverPort.getText().equals("")
                 || localPort == null || localPort.getText().equals("")
                 || proxyPort == null || proxyPort.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "请输入完整信息！", "提示消息", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        String serverHost = remoteHost.getText();
-        int serverPort = Integer.parseInt(remotePort.getText());
+        String serverHost = MainForm.serverHost.getText();
+        int serverPort = Integer.parseInt(MainForm.serverPort.getText());
         int local = Integer.parseInt(localPort.getText());
         int proxy = Integer.parseInt(proxyPort.getText());
 

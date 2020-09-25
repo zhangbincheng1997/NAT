@@ -1,0 +1,156 @@
+2020-09-25 18:19:58,756 - 连接服务器：127.0.0.1:8888
+2020-09-25 18:19:58,756 - 注册端口...
+2020-09-25 18:19:58,909 - 注册成功！
+2020-09-25 18:20:05,360 - 请求连接...
+2020-09-25 18:20:05,400 - 连接成功：4889e7fffea7b36d-000064b4-00000003-1bbfb339933cad3d-827e50a5
+2020-09-25 18:20:05,401 - 请求连接...
+2020-09-25 18:20:05,430 - 连接成功：4889e7fffea7b36d-000064b4-00000004-226df739933cad3f-1b2eed8b
+2020-09-25 18:20:05,431 - 请求转发...
+2020-09-25 18:20:05,435 - 请求转发...
+2020-09-25 18:20:05,784 - 转发成功：4889e7fffea7b36d-000064b4-00000003-1bbfb339933cad3d-827e50a5
+2020-09-25 18:20:05,786 - 转发成功：4889e7fffea7b36d-000064b4-00000003-1bbfb339933cad3d-827e50a5
+2020-09-25 18:20:05,788 - 转发成功：4889e7fffea7b36d-000064b4-00000003-1bbfb339933cad3d-827e50a5
+2020-09-25 18:20:05,876 - 请求转发...
+2020-09-25 18:20:05,879 - 请求转发...
+2020-09-25 18:20:05,881 - 请求转发...
+2020-09-25 18:20:05,902 - 转发成功：4889e7fffea7b36d-000064b4-00000003-1bbfb339933cad3d-827e50a5
+2020-09-25 18:20:05,916 - 转发成功：4889e7fffea7b36d-000064b4-00000004-226df739933cad3f-1b2eed8b
+2020-09-25 18:20:05,918 - 转发成功：4889e7fffea7b36d-000064b4-00000004-226df739933cad3f-1b2eed8b
+2020-09-25 18:20:05,948 - 请求转发...
+2020-09-25 18:20:05,949 - 请求转发...
+2020-09-25 18:20:05,955 - 请求连接...
+2020-09-25 18:20:05,961 - 转发成功：4889e7fffea7b36d-000064b4-00000003-1bbfb339933cad3d-827e50a5
+2020-09-25 18:20:05,965 - 转发成功：4889e7fffea7b36d-000064b4-00000003-1bbfb339933cad3d-827e50a5
+2020-09-25 18:20:05,968 - 转发成功：4889e7fffea7b36d-000064b4-00000003-1bbfb339933cad3d-827e50a5
+2020-09-25 18:20:05,979 - 转发成功：4889e7fffea7b36d-000064b4-00000004-226df739933cad3f-1b2eed8b
+2020-09-25 18:20:05,988 - 连接成功：4889e7fffea7b36d-000064b4-00000005-33be176f933cafbd-039e7d9a
+2020-09-25 18:20:05,991 - 请求转发...
+2020-09-25 18:20:05,995 - 请求转发...
+2020-09-25 18:20:05,996 - 请求连接...
+2020-09-25 18:20:06,012 - 转发成功：4889e7fffea7b36d-000064b4-00000005-33be176f933cafbd-039e7d9a
+2020-09-25 18:20:06,014 - 转发成功：4889e7fffea7b36d-000064b4-00000005-33be176f933cafbd-039e7d9a
+2020-09-25 18:20:06,035 - 连接成功：4889e7fffea7b36d-000064b4-00000006-3aea946f933cafc0-c131d4df
+2020-09-25 18:20:06,036 - 请求转发...
+2020-09-25 18:20:06,037 - 请求转发...
+2020-09-25 18:20:06,038 - 请求连接...
+2020-09-25 18:20:06,045 - 转发成功：4889e7fffea7b36d-000064b4-00000006-3aea946f933cafc0-c131d4df
+2020-09-25 18:20:06,066 - 连接成功：4889e7fffea7b36d-000064b4-00000007-354908ef933cafd0-ae908496
+2020-09-25 18:20:06,067 - 请求转发...
+2020-09-25 18:20:06,068 - 请求转发...
+2020-09-25 18:20:06,077 - 转发成功：4889e7fffea7b36d-000064b4-00000007-354908ef933cafd0-ae908496
+2020-09-25 18:20:06,078 - 转发成功：4889e7fffea7b36d-000064b4-00000007-354908ef933cafd0-ae908496
+2020-09-25 18:20:06,216 - 请求转发...
+2020-09-25 18:20:06,226 - 转发成功：4889e7fffea7b36d-000064b4-00000007-354908ef933cafd0-ae908496
+2020-09-25 18:20:06,228 - 转发成功：4889e7fffea7b36d-000064b4-00000007-354908ef933cafd0-ae908496
+2020-09-25 18:20:08,259 - 请求转发...
+2020-09-25 18:20:08,270 - 转发成功：4889e7fffea7b36d-000064b4-00000007-354908ef933cafd0-ae908496
+2020-09-25 18:20:12,093 - An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+java.io.IOException: 远程主机强迫关闭了一个现有的连接。
+	at sun.nio.ch.SocketDispatcher.read0(Native Method)
+	at sun.nio.ch.SocketDispatcher.read(SocketDispatcher.java:43)
+	at sun.nio.ch.IOUtil.readIntoNativeBuffer(IOUtil.java:223)
+	at sun.nio.ch.IOUtil.read(IOUtil.java:192)
+	at sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:380)
+	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:247)
+	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1147)
+	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:347)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:148)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:700)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:635)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:552)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:514)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$6.run(SingleThreadEventExecutor.java:1044)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+2020-09-25 18:20:12,093 - An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+java.io.IOException: 远程主机强迫关闭了一个现有的连接。
+	at sun.nio.ch.SocketDispatcher.read0(Native Method)
+	at sun.nio.ch.SocketDispatcher.read(SocketDispatcher.java:43)
+	at sun.nio.ch.IOUtil.readIntoNativeBuffer(IOUtil.java:223)
+	at sun.nio.ch.IOUtil.read(IOUtil.java:192)
+	at sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:380)
+	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:247)
+	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1147)
+	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:347)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:148)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:700)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:635)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:552)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:514)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$6.run(SingleThreadEventExecutor.java:1044)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+2020-09-25 18:20:12,093 - An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+java.io.IOException: 远程主机强迫关闭了一个现有的连接。
+	at sun.nio.ch.SocketDispatcher.read0(Native Method)
+	at sun.nio.ch.SocketDispatcher.read(SocketDispatcher.java:43)
+	at sun.nio.ch.IOUtil.readIntoNativeBuffer(IOUtil.java:223)
+	at sun.nio.ch.IOUtil.read(IOUtil.java:192)
+	at sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:380)
+	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:247)
+	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1147)
+	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:347)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:148)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:700)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:635)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:552)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:514)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$6.run(SingleThreadEventExecutor.java:1044)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+2020-09-25 18:20:12,093 - An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+java.io.IOException: 远程主机强迫关闭了一个现有的连接。
+	at sun.nio.ch.SocketDispatcher.read0(Native Method)
+	at sun.nio.ch.SocketDispatcher.read(SocketDispatcher.java:43)
+	at sun.nio.ch.IOUtil.readIntoNativeBuffer(IOUtil.java:223)
+	at sun.nio.ch.IOUtil.read(IOUtil.java:192)
+	at sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:380)
+	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:247)
+	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1147)
+	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:347)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:148)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:700)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:635)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:552)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:514)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$6.run(SingleThreadEventExecutor.java:1044)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+2020-09-25 18:20:12,093 - An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+java.io.IOException: 远程主机强迫关闭了一个现有的连接。
+	at sun.nio.ch.SocketDispatcher.read0(Native Method)
+	at sun.nio.ch.SocketDispatcher.read(SocketDispatcher.java:43)
+	at sun.nio.ch.IOUtil.readIntoNativeBuffer(IOUtil.java:223)
+	at sun.nio.ch.IOUtil.read(IOUtil.java:192)
+	at sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:380)
+	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:247)
+	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1147)
+	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:347)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:148)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:700)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:635)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:552)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:514)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$6.run(SingleThreadEventExecutor.java:1044)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+2020-09-25 18:20:12,154 - 请求关闭：4889e7fffea7b36d-000064b4-00000006-3aea946f933cafc0-c131d4df
+2020-09-25 18:20:12,153 - 请求关闭：4889e7fffea7b36d-000064b4-00000005-33be176f933cafbd-039e7d9a
+2020-09-25 18:20:12,166 - 请求关闭：4889e7fffea7b36d-000064b4-00000007-354908ef933cafd0-ae908496
+2020-09-25 18:20:12,182 - 关闭成功！
+2020-09-25 18:20:12,184 - 请求关闭：4889e7fffea7b36d-000064b4-00000004-226df739933cad3f-1b2eed8b
+2020-09-25 18:20:12,184 - 请求关闭：4889e7fffea7b36d-000064b4-00000003-1bbfb339933cad3d-827e50a5
+2020-09-25 18:20:12,185 - 关闭成功！
+2020-09-25 18:20:12,187 - 关闭成功！
+2020-09-25 18:20:12,191 - 关闭成功！
+2020-09-25 18:20:12,194 - 关闭成功！
+2020-09-25 18:20:15,014 - 与服务端断开连接...
+2020-09-25 18:25:37,865 - 连接服务器：127.0.0.1:8888
+2020-09-25 18:25:37,865 - 注册端口...
+2020-09-25 18:25:37,950 - 注册成功！
+2020-09-25 18:25:42,622 - 与服务端断开连接...

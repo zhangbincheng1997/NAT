@@ -6,9 +6,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="nat-server" />
         <module name="nat-common" />
         <module name="nat-client" />
-        <module name="nat-server" />
       </profile>
     </annotationProcessing>
   </component>
